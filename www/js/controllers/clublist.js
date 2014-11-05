@@ -35,12 +35,12 @@ $rootScope.$on('newMessage', function(value, data) {
   // anything you want can go here and will safely be run on the next digest.
      $scope.$apply(function(){
      $scope.messageboxCount = data.length;
-     console.log(data.length + " .......before beep...........")
-     if(data.length > 0){
-      $cordovaNativeAudio.play('recieve');
-     }
-     // $scope.$apply()
-     console.log(data.length + " .......after beep...........")
+     // console.log(data.length + " .......before beep...........")
+     // // if(data.length > 0){
+     // //  $cordovaNativeAudio.play('recieve');
+     // // }
+     // // $scope.$apply()
+     // console.log(data.length + " .......after beep...........")
   })
 
 })
@@ -285,12 +285,15 @@ $rootScope.$on('newMessage', function(value, data) {
         if(snap.val() === 'FOUNDER' || snap.val() === 'VP HR') {
           clubRequestRef.on('value', function(result){
 
-          $scope.$apply(function(){
+          $timeout(function() {
+             $scope.$apply(function(){
              $scope.rightToAdd = true
              $scope.requestCount = result.numChildren();
-             console.log($requestCount)
+             console.log($scope.requestCount)
              $scope.requests = result.val();
           }) 
+          });
+      
 
           })
        
@@ -379,14 +382,14 @@ $rootScope.$on('newMessage', function(value, data) {
   };
     //Cleanup the modal when we're done with it!
   $scope.$on('$destroy', function() {
-    $scope.modal.remove();
+    $scope.memberModal.remove();
   });
   // Execute action on hide modal
-  $scope.$on('modal.hidden', function() {
+  $scope.$on('memberModal.hidden', function() {
     // Execute action
   });
   // Execute action on remove modal
-  $scope.$on('modal.removed', function() {
+  $scope.$on('memberModal.removed', function() {
     // Execute action
   });
   

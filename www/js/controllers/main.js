@@ -1,10 +1,12 @@
 angular.module('main', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, 
-                                $state, $rootScope, capturePictureSrvc) {
+                                $state, $rootScope, capturePictureSrvc, defaultImage) {
   // Form data for the login modal
   $scope.loginData = {};
   $scope.URL = "https://peopler.firebaseio.com"
+
+  $scope.defaultImage = defaultImage;
 
   var dataRef = new Firebase($scope.URL);
   var loginObj = $firebaseSimpleLogin(dataRef)
@@ -21,21 +23,29 @@ angular.module('main', [])
 
 
 
+
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/login.html', {
       scope: $scope
     }).then(function(modal) {
-      $scope.modal = modal;
+      $scope.loginModal = modal;
+    });
+
+    // Create the login modal that we will use later
+    $ionicModal.fromTemplateUrl('templates/create.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.createModal = modal;
     });
 
     // Triggered in the login modal to close it
     $scope.closeLogin = function() {
-      $scope.modal.hide();
+      $scope.loginModal.hide();
     };
 
     // Open the login modal
     $scope.login = function() {
-      $scope.modal.show();
+      $scope.loginModal.show();
     };
 
     $scope.logout = function(){
@@ -43,8 +53,27 @@ angular.module('main', [])
       $firebaseSimpleLogin(dataRef).$logout()
         $state.go('intro')
       
-
     }
+
+
+
+    // Triggered in the login modal to close it
+    $scope.closeCreateClubModal = function() {
+      $scope.createModal.hide();
+    };
+
+    // Open the login modal
+    $scope.openCreateClubModal = function() {
+      $scope.createModal.show();
+    };
+
+
+    $scope.createClub = function(){
+      $scope.createModal.hide();
+    }
+
+
+
 
     $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
       //console.log("firebaseSimpleLogin login")
@@ -80,10 +109,19 @@ angular.module('main', [])
         password: $scope.loginData.password
 
       }).then(function(user) {
+
+        if($scope.imageData !== null){
+          //if someone change profile picture or add new one from longin page
+
+            dataRef.child('users/' + user.id).update({
+            avatar: $scope.imageData
+             });
+        }
+
        // console.log($scope.user)
        // $location.path('app/clublists')
         $state.go('app.clublists')
-       $scope.modal.hide();
+       $scope.loginModal.hide();
 
      }, function(error) {
        console.error("Login failed: ", error);
@@ -97,7 +135,7 @@ angular.module('main', [])
         // console.log($scope.user);
         // Create user 
         loginObj.$createUser($scope.loginData.username, $scope.loginData.password).then(function(user){
-
+          $scope.imageData = $scope.imageData ||  $scope.defaultImage;
           dataRef.child('users').child(user.id).setWithPriority({
             displayName: user.email, /* this may not work with other providers than "password" provider */
             provider: user.provider,
@@ -109,7 +147,7 @@ angular.module('main', [])
         loginObj.$login("password", {email: $scope.loginData.username, password: $scope.loginData.password})
         .then(function(user) {
           $state.go('app.clublists')
-          $scope.modal.hide();
+          $scope.loginModal.hide();
           $scope.imageData = "" //clean image holder
 
         }, function(error) {
@@ -120,5 +158,41 @@ angular.module('main', [])
 
       }
 
+
+
+    //Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.loginModal.remove();
+  });
+  // Execute action on hide modal
+  $scope.$on('loginModal.hidden', function() {
+    // Execute action
+  });
+  // Execute action on remove modal
+  $scope.$on('loginModal.removed', function() {
+    // Execute action
+  });
+  $scope.$on('createModal.hidden', function() {
+    // Execute action
+  });
+  // Execute action on remove modal
+  $scope.$on('createModal.removed', function() {
+    // Execute action
+  });
+
+      //Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.createModal.remove();
+  });
+
+  // // Execute action on hide modal
+  // $scope.$on('createModal.hidden', function() {
+  //   // Execute action
+  // });
+  // // Execute action on remove modal
+  // $scope.$on('createModal.removed', function() {
+  //   // Execute action
+  // });
+  
 
     })

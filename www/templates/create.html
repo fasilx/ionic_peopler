@@ -1,7 +1,10 @@
-<ion-view title="Create">
-<ion-nav-buttons side="left">
-<button menu-toggle="left"class="button button-icon icon ion-navicon"></button>
-</ion-nav-buttons>
+<ion-modal-view>
+  <ion-header-bar>
+  <h1 class="title">Creat New Club</h1>
+  <div class="buttons">
+    <button class="button button-clear" ng-click="closeCreateClubModal()">Close</button>
+  </div>
+</ion-header-bar>
 <ion-content class="has-header" ng-controller="CreateCtrl">
 <h1>Create</h1>
 
@@ -28,4 +31,4 @@
 
 
 </ion-content>
-</ion-view>
+</ion-modal-view>
