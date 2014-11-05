@@ -1,0 +1,235 @@
+/* Empty. Add your own CSS if you like */
+
+/* Bar and title in Navbar  =============================*/
+
+.title {
+
+  color: #8585FF;
+
+}
+
+.bar {
+
+  color: #8585FF;
+  
+}
+
+.bar .bar-header{
+
+  color: #8585FF;
+  background-color:  #8585FF;
+}
+
+.ion-ios7-arrow-back{
+   color: #8585FF;
+}
+
+.message-badge{
+
+  
+  border: 1px solid;
+  border-radius: 10px;
+  border-color: red;
+  color: red;
+  padding-right:7px;
+  position:relative;
+  top: -30px; right:10px;
+  z-index: 1;
+}
+
+/* main text body and separate text body   =================*/
+
+
+.message-container-me {
+    padding-top: 5px;
+    padding-right: 15px; 
+    padding-left: 100px;  
+
+}
+
+.message-container {
+    padding-top: 5px;
+    padding-right: 5px; 
+    padding-left: 5px;"
+    
+}
+
+
+
+.message {
+		/*padding: 2px 2px 0px 2px;*/
+	border: 1px solid;
+    border-radius: 10px;
+    border-color: #B2B2B2;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    display: inline-block;
+  
+
+}
+
+.message-me {
+    /*padding: 2px 2px 0px 2px;*/
+  border: 1px solid;
+    border-radius: 10px;
+    border-color: #006699;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    display: inline-block;
+    background-color: #006699;
+    color: white;
+    float: right;
+
+}
+
+.message-title {
+        /*padding: 2px 2px 0px 2px;*/
+    border: 1px solid;
+    border-radius: 10px;
+    border-color: #8585FF;
+    padding-top: 0px;
+    padding-right: 5px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+    color: #8585FF;
+    
+}
+.message-title-me {
+        /*padding: 2px 2px 0px 2px;*/
+  /*  border: 1px solid;
+    border-radius: 50px;
+    border-color: #8585FF;
+    padding-top: 0px;
+    padding-right: 5px;
+    padding-bottom: 0px;
+    display: inline-block;*/
+    padding-right: 5px;
+    float: right;
+        
+    
+    
+}
+.message-title:hover { 
+    background-color: yellow;
+}
+
+.dim {
+
+	font-size: 80%;
+	color: #727272;
+
+}
+
+.cred {
+
+	font-size: 80%;
+	
+}
+
+.club {
+
+    background-color: #66CCFF
+
+}
+
+.separate {
+
+    background-color: #EEEEEE
+}
+
+.side-menu {
+
+    font-color: blue;
+    font-size: 200%;
+    padding-left: 5%;
+
+}
+
+/* message textarea at the footer with camera*/
+
+.message-box {
+
+  /*padding: 2px 2px 0px 2px;*/
+  border: 1px solid;
+    border-radius: 10px;
+    border-color: #8585FF;
+    padding: 7px 7px 7px 7px;
+        
+}
+
+.message-avatar {
+
+    border: 1px solid;
+    border-radius: 20px;
+    border-color: #8585FF;
+
+        
+}
+
+.request-count {
+
+    border: 1px solid;
+    border-radius: 20px;
+    border-color: #8585FF;
+    background-color: #8585FF;
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+
+
+
+        
+}
+
+
+
+.message-box-image {
+
+  /*padding: 2px 2px 0px 2px;*/
+    border: 1px solid;
+    border-radius: 10px;
+    border-color: #8585FF;
+    padding: 7px 7px 7px 7px;
+    width: 100px;
+        
+}
+
+.theme {
+
+  color: #8585FF;
+}
+
+
+/* errores and miscs ================================*/
+
+.error {
+
+    color: red
+}
+
+
+/* silder =========================================*/
+
+.slider {
+  height: 100%;
+  color: #fff;
+}
+.slider h3 {
+  color: #fff;
+}
+
+.slider-slide {
+  padding-top: 80px;
+
+  text-align: center;
+
+  /*font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; */
+  font-weight: 300;
+
+}
+
+

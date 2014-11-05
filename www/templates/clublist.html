@@ -1,0 +1,124 @@
+
+<ion-view title="{{clubBar.name}}"  ng-controller="ClublistCtrl">
+
+<ion-nav-buttons side="right">
+<a style="padding-right:30px;" ng-if="messageboxCount" class="tab tabs-icon-only" ng-click="goToMessages()">
+	
+		<div  class="ion-ios7-email-outline" style="font-size:200%;">	
+		</div>
+		<div  ng-show="messagebox.length" class="message-badge">
+			 {{messageboxCount}}
+		 </div>
+</a>
+
+
+</ion-nav-buttons>
+<ion-nav-buttons side="right">
+<a style="padding-right:20px;" class="tab tabs-icon-only" ng-click="openPopover()">
+	<i style="font-size:200%;" class="ion-ios7-search-strong"></i>
+</a>
+</ion-nav-buttons>
+
+
+<ion-nav-buttons side="right">
+
+<a ng-show="rightToAdd"  class="tab tabs-icon-only" ng-click="openModal()">
+	<div class="ion-ios7-personadd-outline" style="font-size:200%;">	
+	</div>
+	<div  ng-show="requestCount > 0" 
+	      class="message-badge">{{requestCount}}
+    </div>
+
+</a>
+</ion-nav-buttons>
+
+
+
+
+<ion-content class="has-header has-footer">
+
+<div  ng-class="{'message-container-me': recievedMessage.sender.id === me.id,
+'message-container': recievedMessage.sender.id !== me.id}" 
+ng-repeat="recievedMessage in recievedMessages" ng-init="scrollBottom()" >
+
+
+<div ng-class="{'message-me': recievedMessage.sender.id === me.id,
+'message': recievedMessage.sender.id !== me.id}" >
+<div >
+	<img ng-if="!!recievedMessage.message.image" class="full-image"
+	ng-src="data:image/jpeg;base64,{{recievedMessage.message.image}}" 
+	alt="image message NOT shown" style="max-width:200px;min-width:200px">
+	<br ng-if="!!recievedMessage.message.image">
+	{{recievedMessage.message.message}}
+
+
+</div>
+
+</div>	
+<div class="dim" 
+ng-class="{'message-title-me': recievedMessage.sender.id === me.id}" >
+{{recievedMessage.createdAt | timeago:ago}}</div>	
+
+
+<div class="row dim">
+
+	<a ng-hide="recievedMessage.sender.id === me.id" class="message-title" ng-click="toPerson(recievedMessage.sender.id)"> {{recievedMessage.sender.email | shaveEmail}}
+		<i class="ion-reply"></i>
+	</a>
+	<a ng-hide="recievedMessage.sender.id === me.id" class="message-title" ng-click="toPeople(recievedMessage.position)">{{recievedMessage.position}}
+		<i class="ion-reply-all"></i>
+	</a>
+	
+</div>
+
+</div>
+<br>
+
+
+	<!-- 	<div style="padding: 0 0 0 100px">
+			<img class="message-box"  ng-if='imageData'
+			ng-src="data:image/jpeg;base64,{{imageData}}" 
+			alt="image message NOT shown" height="80" width="80">
+		</div> -->
+
+
+	</ion-content>
+
+	<div class="bar bar-footer row row-bottom" >
+		
+		<div class="col button button-clear " ng-click="takePicture()">
+			<i class="icon ion-camera theme"></i>
+		</div>
+		<div id="messageBox" class="col col-75">
+			<img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
+			alt="image message NOT shown" height="80" width="80"><br>
+			<textarea autofocus ng-class="{'message-box-image': imageData === null}"
+			class="message-box" msd-elastic rows="1" 
+			style="resize: none;" ng-model="message" placeholder="message" > 
+		</textarea >
+	</div>
+	<div class="col" style="font-size:95%;" class="button button-clear theme" ng-click="sendMessage(message);message=''">
+		<i class="theme">Send</i>
+	</div>
+
+
+</div>
+		<!-- 
+		<button class="button button-clear col" ng-click="takePicture()"><i class="icon ion-camera theme"></i></button>
+		<div col col-75>
+			  	<img class="message-box"  ng-if='imageData'
+						 ng-src="data:image/jpeg;base64,{{imageData}}" 
+					     alt="image message NOT shown" height="80" width="80">
+				<br>
+
+
+		<textarea autofocus class="message-box" msd-elastic rows="1" 
+				  style="resize: none;" 
+				  ng-model="message" placeholder="message" > 
+				
+	    </textarea >
+		</div>
+		<button style="font-size:95%;" class="button button-clear  col col-15 theme" ng-click="sendMessage(message);message=''"><i class="theme">Send</i></button>
+	</div> -->
+
+</ion-view>

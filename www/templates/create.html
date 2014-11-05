@@ -1,0 +1,31 @@
+<ion-view title="Create">
+<ion-nav-buttons side="left">
+<button menu-toggle="left"class="button button-icon icon ion-navicon"></button>
+</ion-nav-buttons>
+<ion-content class="has-header" ng-controller="CreateCtrl">
+<h1>Create</h1>
+
+<div class="list">
+	<label class="item item-input">
+		<span class="input-label">Club Name</span>
+		<input ng-model="club.name" type="text">
+	</label>
+	<label class="item item-input">
+		<span class="input-label">Small Description</span>
+		<input ng-model="club.description" type="text">
+	</label>
+
+		<div id="messageBox" class="col col-75">
+			<img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
+				 alt="image message NOT shown" height="80" width="80"><br>
+		</div>
+		<div class="col button button-clear " ng-click="takePicture()">
+			<i class="icon ion-camera theme"></i> Add Profile Picture
+		</div>
+</div>
+<button class="button button-block button-positive" ng-click="createClub(club)"> Create New Club </button>
+
+
+
+</ion-content>
+</ion-view>

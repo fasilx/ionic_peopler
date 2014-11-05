@@ -1,0 +1,54 @@
+<div class="modal">
+  <ion-header-bar>
+    <h1 class="title">Login / signup</h1>
+ 
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeLogin()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content ng-init="createUser=false">
+
+  <button ng-click="createUser=!createUser" class="button button-block button-light">
+  <span ng-hide="createUser">Sign Up</span><span ng-show="createUser">Log In</span>
+  </button>
+
+
+ 
+
+    
+      <div class="list" >
+        <label class="item item-input">
+          <span class="input-label">Username</span>
+          <input type="text" ng-model="loginData.username">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Password</span>
+          <input type="password" ng-model="loginData.password">
+        </label>
+           <label class="item item-input" ng-show="createUser">
+          <span class="input-label">Password Confirmation</span>
+          <input type="password" ng-model="loginData.passwordConfirmation">
+        </label>
+
+            <div id="messageBox" class="col col-75">
+            <img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
+                 alt="image message NOT shown" height="80" width="80"><br>
+            </div>
+            <div class="col button button-clear " ng-click="takePicture()">
+              <i class="icon ion-camera theme"></i> Add Or Change Profile Picture
+            </div>
+
+        <label class="item" ng-hide="createUser">
+          <button class="button button-block button-positive" ng-click="doLogin()">Log In</button>
+          <!-- <button ng-show="createUser" class="button button-block button-positive" ng-click="doSignup()">Sign Up</button> -->
+        </label>
+        
+         <label class="item" ng-show="createUser">
+              <!-- <button ng-hide="createUser" class="button button-block button-positive" ng-click="doLogin()">Log In</button> -->
+          <button  class="button button-block button-positive" ng-click="doSignup()">Sign Up</button>
+        </label>
+
+      </div>
+    
+  </ion-content>
+</div>

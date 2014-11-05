@@ -1,0 +1,39 @@
+<div style="background-color:white;">
+	<br><br><br><br> 
+
+			<div class="item-input-inset">
+				<label style="padding-right: 5%;" class="toggle toggle">
+					<input type="checkbox" ng-model="checked">
+					<div class="track">
+						<div class="handle "></div>
+					</div>
+				</label>
+				<label ng-hide="checked" class="item-input-wrapper" >
+					<i class="icon ion-ios7-search placeholder-icon"></i>
+					<input type="search" placeholder="Find A Person" ng-model="email">
+				</label>
+				<label ng-show="checked" class="item-input-wrapper" style="background-color: #4a87ee; ">
+					<i class="icon ion-ios7-search placeholder-icon" ></i>
+					<input type="search" placeholder="Find A Group" ng-model="title" style="color:white;">
+				</label>
+			</div>
+
+			<div ng-hide="checked" style="padding-left: 20%;">
+				<ul> (messages individuals)
+					<li ng-repeat="user in allUsers  | filter:email | limitTo:5">
+						<a href ng-click="toPerson(user.id)">{{user.email | shaveEmail}}</a>
+					</li>
+				</ul>
+			</div>
+
+			<div ng-show="checked" style="padding-left: 20%;">
+				<ul> (messages all with this title)
+					<li ng-repeat="pos in allUsers  | unique:'position' | filter:title | limitTo:5">
+						<a href ng-click="toPeople(pos.position)">{{pos.position}}</a>
+					</li>
+				</ul>
+			</div>
+			<!-- {{allUsers}} -->
+			<hr>
+
+</div>

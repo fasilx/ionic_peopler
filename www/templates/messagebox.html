@@ -1,0 +1,18 @@
+<ion-view title="Unread Messages" >
+<!-- no message will skip this page if there are no messages -->
+<ion-content class="has-header" ng-controller="ClublistCtrl" >
+<div class="list" >
+ <!--  {{messagebox}} -->
+    <a class="item item-avatar" ng-repeat="message in messagebox" ng-click="toPerson(message.provider_id)">
+      <img src="img/ionic.png">
+      <h2>{{message.displayName}}</h2>
+      <p>unread</p>
+    </a>
+
+  
+
+</div>
+<!-- {{messagebox}}
+hello -->
+</ion-content>
+</ion-view>
