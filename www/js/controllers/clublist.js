@@ -5,24 +5,32 @@ angular.module('clublist', [])
                                       $timeout, $ionicPopover,  $cordovaDialogs, capturePictureSrvc, messageboxSrvc) {
 
  var clubRef = new Firebase($scope.URL + "/clubs/" + $stateParams.clublistId);
- var clubSync = $firebase(clubRef);
+ // var clubSync = $firebase(clubRef);
  var userRef = new Firebase($scope.URL + "/users")
  var messageAllRef = new Firebase($scope.URL + "/messages/" + $stateParams.clublistId + "/all")
- var loginObj = $firebaseSimpleLogin(new Firebase($scope.URL));
+ //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
+ var ref = new Firebase("https://peopler.firebaseio.com");
+ 
 
 
  $scope.scrollBottom = function(){
-   $ionicScrollDelegate.scrollBottom();
+  if(!$scope.ignoreScrollBottom){
 
+   $ionicScrollDelegate.scrollBottom();
  }
+
+
+}
 
  // $scope.$watch('messagebox', function(){
  //    alert("messagebox")
  // })
 
-loginObj.$getCurrentUser().then(function(currentUser){
-    $scope.me = currentUser;
-      messageboxSrvc.messagebox(currentUser.id, $stateParams.clublistId).then(function(messagebox){
+  ref.onAuth(function(currentUser){
+  console.log(currentUser)
+  //currentUser.id = currentUser.uid.split(":")[1] //the new simple login does not proved id
+      $scope.me = currentUser;
+      messageboxSrvc.messagebox(currentUser.uid, $stateParams.clublistId).then(function(messagebox){
         $scope.messagebox = messagebox;
          console.log(messagebox)       
     })
@@ -70,7 +78,7 @@ $rootScope.$on('newMessage', function(value, data) {
  $scope.allUsers = []; //this array was created for query filters to work properly in the view
       snap.forEach( function(childSnap){
         var item = {};
-        item.id = childSnap.name();
+        item.id = childSnap.key()
         item.email = childSnap.val().email;
         item.position = childSnap.val().position;
 
@@ -85,8 +93,8 @@ $rootScope.$on('newMessage', function(value, data) {
 
  $scope.toPerson = function(person){
      // $rootScope.thisClub = $stateParams.clublistId
-     loginObj.$getCurrentUser().then(function(currentUser){
-
+     ref.onAuth(function(currentUser){
+     // currentUser.id = currentUser.uid.split(":")[1]
       $scope.currentUser = currentUser; // set current user in scope while scope is alive
 
       // var rule = []
@@ -97,15 +105,15 @@ $rootScope.$on('newMessage', function(value, data) {
         ////console.log(typeof person)
           //console.log(typeof currentUser.id)
         // messages should endup in the same location.
-        if (person < currentUser.id){
-          refName = person + "," + currentUser.id
+        if (person < currentUser.uid){
+          refName = person + "," + currentUser.uid
           //console.log("this if is called")
           //console.log(refName)
           // 177,178 or 177,177
         }else{
           //console.log("else is called")
 
-          refName = currentUser.id + "," + person;
+          refName = currentUser.uid + "," + person;
            //console.log(refName)
           // 177,178 
         }
@@ -115,46 +123,68 @@ $rootScope.$on('newMessage', function(value, data) {
 
       messagePersonRef.update({
                                receiver: {person: person, futureLocation: false}, 
-                                 sender: {person: currentUser.id, futureLocation: false}
+                                 sender: {person: currentUser.uid, futureLocation: false}
                                })
-      var messageboxItem = {}
-      messageboxItem[person] = false;
-      clubRef.child("members/" + currentUser.id + "/messagebox").update(messageboxItem)
+
+      // ready the location to put message in
+      // var messageboxItem = {}
+      // messageboxItem[person] = false;
+      clubRef.child("members/" + currentUser.uid + "/messagebox/" + person).remove()//(messageboxItem)
       
       // setTimeout(function(){ $state.go('app.separate', item );}, 3000)
-      $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: person, messageType: 'person'});
+      $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: person, messageType: 'person', position: 'person'});
 
     });
 
    }
 
-   $scope.toPeople = function(position){
+   $scope.toPeople = function(title){
     // $rootScope.thisClub = $stateParams.clublistId
-    loginObj.$getCurrentUser().then(function(currentUser){
+     ref.onAuth(function(currentUser){
+     // currentUser.id = currentUser.uid.split(":")[1]
 
       $scope.currentUser = currentUser; // set current user in scope while scope is alive
 
+     
       var rule = [];
+     
+      rule.push(currentUser.uid)
       //var positionRef = clubRef.child("members");
 
       clubRef.child('members').once( 'value', function(dataSnapshot) {  /* handle read data */ 
         angular.forEach(dataSnapshot.val(), function(value, key) {
-          if(value.position === position){
+          if(value.position === title && key !== currentUser.uid){
             rule.push(key);
           }
         });
+
+        // var membership = ""
+        var refName = rule.sort().toString()  //creates one locaiton for all groupe messages
+       
+        // if(rule.indexOf(currentUser.uid) === -1)
+        // {
+
+        //   membership = 'only'  //only members with this title in this loop
+        // }else
+        // { membership = 'open'} // someone other than this members is in the loop
+
         var messageGroupRef = new Firebase($scope.URL + "/messages/" + 
-          $stateParams.clublistId + "/group/" + rule + "," + currentUser.id)
-        messageGroupRef.update({rule: rule.join(), sender: currentUser.id})
+          $stateParams.clublistId + "/group/" + refName)
 
-        var refName = rule.toString() + currentUser.id;
+        messageGroupRef.update({
+                               receiver: {people: rule.toString(), futureLocation: false}, 
+                                 sender: {person: currentUser.uid, futureLocation: false}
+                               })
 
-        // if there is only one in a group, make this a personal message
-        if(rule.length === 1){
-           $scope.toPerson(rule.toString())
+       
+
+        // if there is only one in a group, make this a personal message.
+        // that means two people inluding the sender
+        if(rule.length === 2){
+           $scope.toPerson(rule.splice(indexOf(currentUser.uid), 1).toString())
         }else
         {
-         $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: position, messageType: 'group', position: position});
+         $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: rule, messageType: 'group', position:title});
         }
 
       });
@@ -207,10 +237,22 @@ $rootScope.$on('newMessage', function(value, data) {
   //         });
   // }
 
-  //message recieved ===============================================
-  $scope.recievedMessages = $firebase(messageAllRef.limit(10)).$asArray();
- //message recieved ===============================================
+  var load = 10;
+  $scope.loadMore = function(){
+      // adds 10 more data everytime it is called.
 
+       load =  load + 10;
+       $scope.recievedMessages = $firebase(messageAllRef.limit(load)).$asArray();
+       $scope.ignoreScrollBottom = true;
+       //$ionicScrollDelegate.scrollTop();
+       console.log("scrolling top")
+
+  }
+  $scope.ignoreScrollBottom = false;  //set this to false if 'load more' button is not pressed
+  //message recieved ===============================================
+  $scope.recievedMessages = $firebase(messageAllRef.limitToFirst(load)).$asArray();
+ //message recieved ===============================================
+ console.log($scope.recievedMessages)
 
   $scope.sendMessage = function(message){
 
@@ -220,11 +262,14 @@ $rootScope.$on('newMessage', function(value, data) {
     var messageData = {message: message, image: $scope.imageData}
 
     if($scope.currentUser){
-      var position = clubRef.child("members/" + $scope.currentUser.id + "/position").once( 'value', function(positionSnapshot) {
+
+     // currentUser.id = currentUser.uid.split(":")[1]  //new firebase auth does not have id by default anymore. sucks
+
+      var position = clubRef.child("members/" + $scope.currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
 
         messageSync.$push({sender: $scope.currentUser, message: messageData,
          position: positionSnapshot.val(),
-         rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}).then(function(ref) {
+         rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}).then(function(res) {
 
           // var messageboxItem = {}
           // messageboxItem[currentUser.id] = false;
@@ -244,16 +289,17 @@ $rootScope.$on('newMessage', function(value, data) {
 
     }else{
 
-      loginObj.$getCurrentUser().then(function(currentUser){
+      ref.onAuth(function(currentUser){
+      //currentUser.id = currentUser.uid.split(":")[1]
 
       $scope.currentUser = currentUser; // set current user in scope while scope is alive
 
-      var position = clubRef.child("members/" + currentUser.id + "/position").once( 'value', function(positionSnapshot) {
+      var position = clubRef.child("members/" + currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
 
 
         messageSync.$push({sender: currentUser, message: messageData,
          position: positionSnapshot.val(),
-         rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}).then(function(ref){
+         rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}).then(function(res){
 
           $cordovaDialogs.beep(1)
           console.log('beep......')
@@ -276,9 +322,10 @@ $rootScope.$on('newMessage', function(value, data) {
   $scope.requestingMember = {}
   $scope.titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP DEPT2', 'VP DEPT3', 'MEMBER', 'GUEST'];
 
-   loginObj.$getCurrentUser().then(function (melse) {
-      
-       var clubPostionRef = clubRef.child("/members/" + melse.id + "/position");
+    ref.onAuth(function(currentUser){
+     // currentUser.id = currentUser.uid.split(":")[1]
+
+       var clubPostionRef = clubRef.child("/members/" + currentUser.uid + "/position");
        var clubRequestRef = clubRef.child("requests");
        var position = clubPostionRef.on('value', function (snap) {
          // body...
@@ -335,6 +382,7 @@ $rootScope.$on('newMessage', function(value, data) {
            userIdRef.update(obj) 
 
         $scope.memberModal.hide()
+
 
       });
 

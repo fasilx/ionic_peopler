@@ -1,53 +1,54 @@
 <ion-modal-view>
-  <ion-header-bar>
-  <h1 class="title">Add New Member</h1>
-  <div class="buttons">
-    <button class="button button-clear" ng-click="closeModal()">Close</button>
-  </div>
+<ion-header-bar>
+<h1 class="title">Add New Member</h1>
+<div class="buttons">
+  <button class="button button-clear" ng-click="closeModal()">Close</button>
+</div>
 </ion-header-bar>
 <ion-content>
 
 <div ng-init="showRequests=false">
 
-  <button ng-show="!showRequests" class="button button-small button-calm" ng-click="showRequests=true">
+  <button ng-show="!showRequests" class="button button-small button-positive" ng-click="showRequests=true">
     <span ng-show"showRequests">show requests</span>
   </button>
-   <button ng-show="showRequests" class="button button-small button-calm" ng-click="showRequests=false">
+  <button ng-show="showRequests" class="button button-small button-calm" ng-click="showRequests=false">
     <span ng-show"!showRequests">hide requests</span>
   </button>
 
   <div class="clist" ng-show="showRequests">
 
     <div ng-show="requests === null">There are no requests at this point</div>
-    
-      <div class="item" ng-repeat="(key, data) in requests">
-        <div class="row">
+     <form>
+        <div class="item" ng-repeat="(key, data) in requests">
+          <div class="row">
             <div class="col">{{data}}
             </div>
-          
-            <div class="col">
+       
+          <div class="col">
             <select ng-init="requestingMember.position = titles[8]" 
-                    ng-model="requestingMember.position" ng-options="title for title in titles">
-            </select>
-            </div>
-            <div class="col">
-             <button ng-hide="requestAdded" class="button button-small button-positive" 
-                     ng-click="addRequestingMember(key,data,requestingMember.position)">Accept</button>
-            </div>
-          </div>
-      </div>
+            ng-model="requestingMember.position" ng-options="title for title in titles">
+          </select>
+        </div>
+        <div class="col">
+         <button ng-hide="requestAdded" class="button button-small button-positive" 
+         ng-click="addRequestingMember(key,data,requestingMember.position)">Accept</button>
+       </div>
+     </form>
+   </div>
+ </div>
 
-  </div>
 </div>
-   
-   <form name="myForm"> 
+</div>
+
+<form name="myForm"> 
 
   <div class="list" ng-show="!showRequests">
 
-      <div class="error" ng-show="form.email.$dirty && form.email.$error.required">
-            Invalid email
-      </div>
-      <div ng-show="memeberAddError !== null" class="error">{{memeberAddError}}<div>
+    <div class="error" ng-show="form.email.$dirty && form.email.$error.required">
+      Invalid email
+    </div>
+    <div ng-show="memeberAddError !== null" class="error">{{memeberAddError}}<div>
 
       <label class="item item-input">
         <span class="input-label">Member's Email</span>
@@ -63,7 +64,7 @@
 
       <label class="item" >
         <button ng-disabled ="myForm.email.$dirty && myForm.email.$invalid" class="button button-block button-positive" 
-                ng-click="addMember('fromForm')">Add</button>
+        ng-click="addMember('fromForm')">Add</button>
 
       </label class="item" ng-show="createUser">
 

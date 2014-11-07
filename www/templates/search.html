@@ -13,7 +13,7 @@
 <!-- {{clubs}} -->
 <div class="list">
 
-    <div class="item item-avatar item-icon-left item-button-right" ng-repeat="club in clubs | filter:query | limitTo:10 " >
+    <div class="item item-avatar" ng-repeat="club in clubs | filter:query | limitTo:10 " >
       <img class="message-avatar" ng-src="data:image/jpeg;base64,{{club.avatar}}" 
          alt="img/ionic.png">
       <h2>{{club.name}} </h2> 
@@ -22,17 +22,16 @@
       					  </ng-pluralize>
        </div>
   	  
-      <p>{{club.description}}</p>
-      
-      		<button ng-hide="sending || club.pendding" class="button button-positive button-small" 
-        			 ng-click="joinRequest(club.id); sending = true">
-        			 Request to Join
-        	 </button>
+      <p>{{club.description}}      
+      		<i><a class="dim" style="color:#8585FF;float:right" ng-hide="sending || club.pendding" ng-click="joinRequest(club.id); sending = true">
+        			 Request To Join
+        	</a></i>
         
-        	 <button ng-disabled="success === club.id" ng-show="success === club.id || club.pendding" class="button button-assertive button-small"> 
-        			 Request is Pendding
-        	 </button>
-      
+        	<i><a class="dim" style="color:#FF7575;float:right" ng-disabled="success === club.id" ng-show="success === club.id || club.pendding"> 
+        			 Request Pendding
+        	</a></i>
+      </p>
+
     </div>
 
 

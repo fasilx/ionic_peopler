@@ -4,11 +4,11 @@
 <ion-nav-buttons side="right">
 <a style="padding-right:30px;" ng-if="messageboxCount" class="tab tabs-icon-only" ng-click="goToMessages()">
 	
-		<div  class="ion-ios7-email-outline" style="font-size:200%;">	
-		</div>
-		<div  ng-show="messagebox.length" class="message-badge">
-			 {{messageboxCount}}
-		 </div>
+	<div  class="ion-ios7-email-outline" style="font-size:200%;">	
+	</div>
+	<div  ng-show="messagebox.length" class="message-badge">
+		{{messageboxCount}}
+	</div>
 </a>
 
 
@@ -26,8 +26,8 @@
 	<div class="ion-ios7-personadd-outline" style="font-size:200%;">	
 	</div>
 	<div  ng-show="requestCount > 0" 
-	      class="message-badge">{{requestCount}}
-    </div>
+		class="message-badge">{{requestCount}}
+	</div>
 
 </a>
 </ion-nav-buttons>
@@ -37,13 +37,15 @@
 
 <ion-content class="has-header has-footer">
 
-<div  ng-class="{'message-container-me': recievedMessage.sender.id === me.id,
-'message-container': recievedMessage.sender.id !== me.id}" 
+<button ng-if="recievedMessages.length > 9" class="button button-small button-block button-stable" ng-click="loadMore()">load more</button>
+
+<div  ng-class="{'message-container-me': recievedMessage.sender.uid === me.uid,
+'message-container': recievedMessage.sender.uid !== me.uid}" 
 ng-repeat="recievedMessage in recievedMessages" ng-init="scrollBottom()" >
 
 
-<div ng-class="{'message-me': recievedMessage.sender.id === me.id,
-'message': recievedMessage.sender.id !== me.id}" >
+<div ng-class="{'message-me': recievedMessage.sender.uid === me.uid,
+'message': recievedMessage.sender.uid !== me.uid}" >
 <div >
 	<img ng-if="!!recievedMessage.message.image" class="full-image"
 	ng-src="data:image/jpeg;base64,{{recievedMessage.message.image}}" 
@@ -56,16 +58,16 @@ ng-repeat="recievedMessage in recievedMessages" ng-init="scrollBottom()" >
 
 </div>	
 <div class="dim" 
-ng-class="{'message-title-me': recievedMessage.sender.id === me.id}" >
+ng-class="{'message-title-me': recievedMessage.sender.uid === me.uid}" >
 {{recievedMessage.createdAt | timeago:ago}}</div>	
 
 
 <div class="row dim">
 
-	<a ng-hide="recievedMessage.sender.id === me.id" class="message-title" ng-click="toPerson(recievedMessage.sender.id)"> {{recievedMessage.sender.email | shaveEmail}}
+	<a ng-hide="recievedMessage.sender.uid === me.uid" class="message-title" ng-click="toPerson(recievedMessage.sender.uid)"> {{recievedMessage.sender.password.email | shaveEmail}}
 		<i class="ion-reply"></i>
 	</a>
-	<a ng-hide="recievedMessage.sender.id === me.id" class="message-title" ng-click="toPeople(recievedMessage.position)">{{recievedMessage.position}}
+	<a ng-hide="recievedMessage.sender.uid === me.uid" class="message-title" ng-click="toPeople(recievedMessage.position)">{{recievedMessage.position}}
 		<i class="ion-reply-all"></i>
 	</a>
 	
@@ -73,13 +75,6 @@ ng-class="{'message-title-me': recievedMessage.sender.id === me.id}" >
 
 </div>
 <br>
-
-
-	<!-- 	<div style="padding: 0 0 0 100px">
-			<img class="message-box"  ng-if='imageData'
-			ng-src="data:image/jpeg;base64,{{imageData}}" 
-			alt="image message NOT shown" height="80" width="80">
-		</div> -->
 
 
 	</ion-content>

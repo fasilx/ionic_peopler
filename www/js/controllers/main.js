@@ -6,12 +6,17 @@ angular.module('main', [])
   $scope.loginData = {};
   $scope.URL = "https://peopler.firebaseio.com"
 
+
+
   $scope.defaultImage = defaultImage;
 
-  var dataRef = new Firebase($scope.URL);
-  var loginObj = $firebaseSimpleLogin(dataRef)
+  // var dataRef = new Firebase($scope.URL);
+  //var ref = $firebaseSimpleLogin(dataRef)
+  var ref = new Firebase($scope.URL)
 
-  loginObj.$getCurrentUser().then(function(currentUser){
+  ref.onAuth(function(currentUser){
+
+
 
      $scope.me = currentUser;
      // $state.go('app.clublists')
@@ -50,7 +55,7 @@ angular.module('main', [])
 
     $scope.logout = function(){
 
-      $firebaseSimpleLogin(dataRef).$logout()
+      ref.unauth()
         $state.go('intro')
       
     }
@@ -73,21 +78,31 @@ angular.module('main', [])
     }
 
 
+    ref.onAuth(function(user) {
+      if (user) {
+        // user authenticated with Firebase
+        $scope.user = user;
 
+        console.log("User ID: " + user.uid + ", Provider: " + user.provider);
+      } else {
+        // user is logged out
 
-    $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
-      //console.log("firebaseSimpleLogin login")
-      $scope.user = user;
-      $state.reload();
-     // console.log($scope.user)
-   });
-    // Upon successful logout, reset the user object
-    $rootScope.$on("$firebaseSimpleLogin:logout", function(event) {
-      $scope.user = null;
-      console.log("firebaseSimpleLogin logout")
-      console.log($scope.user)
-
+      }
     });
+
+   //  $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
+   //    //console.log("firebaseSimpleLogin login")
+   //    $scope.user = user;
+   //    $state.reload();
+   //   // console.log($scope.user)
+   // });
+   //  // Upon successful logout, reset the user object
+   //  $rootScope.$on("$firebaseSimpleLogin:logout", function(event) {
+   //    $scope.user = null;
+   //    console.log("firebaseSimpleLogin logout")
+   //    console.log($scope.user)
+
+   //  });
 
 
 
@@ -102,29 +117,34 @@ angular.module('main', [])
 
 
       // Perform the login action when the user submits the login form
-      $scope.doLogin = function() {
+  $scope.doLogin = function() {
 
-       $firebaseSimpleLogin(dataRef).$login("password", {
-        email: $scope.loginData.username,
-        password: $scope.loginData.password
+        ref.authWithPassword({
+              email: $scope.loginData.username,
+              password: $scope.loginData.password
 
-      }).then(function(user) {
+      }, function(error, user) {
 
+      if(error === null){
+        $scope.user = user;
         if($scope.imageData !== null){
           //if someone change profile picture or add new one from longin page
 
-            dataRef.child('users/' + user.id).update({
+            ref.child('users/' + user.uid).update({
             avatar: $scope.imageData
              });
         }
 
-       // console.log($scope.user)
-       // $location.path('app/clublists')
-        $state.go('app.clublists')
-       $scope.loginModal.hide();
 
-     }, function(error) {
-       console.error("Login failed: ", error);
+        $state.go('app.clublists')
+        $scope.loginModal.hide();
+
+      }else {
+        console.log(error.message)
+        $scope.errorMessage = error.message;
+    
+      }
+
      });
 
     }
@@ -132,32 +152,89 @@ angular.module('main', [])
       // Perform the login action when the user submits the login form
       $scope.doSignup = function() {
 
-        // console.log($scope.user);
-        // Create user 
-        loginObj.$createUser($scope.loginData.username, $scope.loginData.password).then(function(user){
-          $scope.imageData = $scope.imageData ||  $scope.defaultImage;
-          dataRef.child('users').child(user.id).setWithPriority({
-            displayName: user.email, /* this may not work with other providers than "password" provider */
-            provider: user.provider,
-            provider_id: user.id,
-            avatar: $scope.imageData
-          }, user.email);
+        // // console.log($scope.user);
+        // // Create user 
+         ref.createUser({email: $scope.loginData.username, password: $scope.loginData.password}, function(error){
 
-        // login in the created user
-        loginObj.$login("password", {email: $scope.loginData.username, password: $scope.loginData.password})
-        .then(function(user) {
-          $state.go('app.clublists')
-          $scope.loginModal.hide();
-          $scope.imageData = "" //clean image holder
 
-        }, function(error) {
-          //console.error("Login failed: ", error);
-        });
+             if(error === null){
 
-      });
+                  ref.authWithPassword({
+                  email: $scope.loginData.username,
+                  password: $scope.loginData.password
 
-      }
+                }, function(loginError, user) {
 
+                 if(loginError === null){
+                    
+                   $scope.imageData = $scope.imageData ||  $scope.defaultImage;
+                    ref.child('users').child(user.uid).setWithPriority({
+                      displayName: user.password.email, /* this may not work with other providers than "password" provider */
+                      provider: user.provider,
+                      provider_id: user.uid,
+                      avatar: $scope.imageData
+                    }, user.password.email);
+
+                  $state.go('app.clublists')
+                  $scope.loginModal.hide();
+
+
+                    }     
+        
+                  else 
+                  {
+                    console.log(loginError.message)
+                    $scope.errorMessage = error.message;
+                    }
+              
+                })
+
+            }
+
+            else{
+
+              $scope.errorMessage = error;
+              console.log(error)
+           }
+
+              });
+    }
+
+
+
+          // if(error === null){
+
+
+
+          //  $scope.imageData = $scope.imageData ||  $scope.defaultImage;
+          //   ref.child('users').child(user.uid).setWithPriority({
+          //     displayName: user.password.email, /* this may not work with other providers than "password" provider */
+          //     provider: user.provider,
+          //     provider_id: user.uid,
+          //     avatar: $scope.imageData
+          //   }, user.password.email);
+
+          //   // // login in the created user
+          //   //   ref.authWithPassword({email: $scope.loginData.username, password: $scope.loginData.password},
+          //   //     function(user) {
+          //   //     $scope.user = user;
+          //   //     $state.go('app.clublists')
+          //   //     $scope.loginModal.hide();
+          //   //     $scope.imageData = "" //clean image holder
+
+          //   //   }, function(error) {
+          //   //     //console.error("Login failed: ", error);
+          //   //   });
+
+
+          //     // login the created user
+          //     $scope.doLogin();
+
+
+          // }
+
+
+    
 
 
     //Cleanup the modal when we're done with it!

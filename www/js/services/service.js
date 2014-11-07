@@ -11,14 +11,17 @@ angular.module('service', [])
    clubRef.child('members/' + currentUserId + '/messagebox').on('value', function(melse){
 
     angular.forEach(melse.val(), function(value, key) {
+      console.log(melse.val())
       userRef.child(key).on('value',function(res){
         if (value) {
 
           messageboxMessage.push(res.val());
+          console.log(res.val())
 
         };
         $rootScope.$broadcast('newMessage', messageboxMessage)    
         deferred.resolve(messageboxMessage);
+        console.log(messageboxMessage)
         
       })
     });

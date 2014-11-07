@@ -4,10 +4,12 @@ angular.module('others', [])
 
 .controller("CreateCtrl", function($scope, $firebase, $firebaseSimpleLogin, $state, capturePictureSrvc) {
 
-  var ref = new Firebase($scope.URL + "/clubs");
+  var clubRef = new Firebase($scope.URL + "/clubs");
 
-  sync = $firebase(ref);
-  var loginObj = $firebaseSimpleLogin(new Firebase($scope.URL));
+  sync = $firebase(clubRef);
+  //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
+  var ref = new Firebase($scope.URL);
+
 
 
   $scope.imageData = ""; // if picture is taken use that, otherwise use empty string
@@ -24,22 +26,23 @@ angular.module('others', [])
 
  $scope.createClub = function(club){
 
-  loginObj.$getCurrentUser().then(function(currentUser){
+    ref.onAuth(function(currentUser){
+      //currentUser.id = currentUser.uid.split(":")[1]
 
     $scope.imageData = $scope.imageData ||  $scope.defaultImage;
 
     //club.name and club.description, etc... are found from the $scope of the main.js, the global scope context
-    sync.$push({name: club.name, description: club.description, avatar: $scope.imageData, founders_id: currentUser.id}).then(function(newChildRef) {
-      //console.log("added record with id " + newChildRef.name());
+    sync.$push({name: club.name, description: club.description, avatar: $scope.imageData, founders_id: currentUser.uid}).then(function(newChildRef) {
+      //console.log("added record with id " + newChildRef.key());
 
-      var clublistId = newChildRef.name();
-      var userId = currentUser.id
+      var clublistId = newChildRef.key();
+      var userId = currentUser.uid
       var messageRef = new Firebase($scope.URL + "/messages/" + clublistId)
       var memberRef = new Firebase($scope.URL + "/clubs/" + clublistId)
 
       memberRef.update({members: userId}, function(){
        var memberPositionRef = new Firebase($scope.URL + "/clubs/" + clublistId + "/members/" + userId)
-       var userIdRef = new Firebase($scope.URL + "/users/" + currentUser.id + "/clubs")
+       var userIdRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
        memberPositionRef.update({position: 'FOUNDER'})
        messageRef.update({all: "init", group: "init", person: "init"})
@@ -48,7 +51,13 @@ angular.module('others', [])
        obj[clublistId] = true;
        userIdRef.update(obj) 
 
-       $state.go('app.single', {clublistId: newChildRef.name()})
+       $scope.createModal.hide(); 
+        //make sure to remove modal after use.Or it will linger cause uninteded stuff
+         $scope.$on('$destroy', function() {
+            $scope.createModal.remove();
+          });
+
+       $state.go('app.single', {clublistId: newChildRef.key()})
      }) 
     });
   })
@@ -63,14 +72,16 @@ angular.module('others', [])
 
   // $state.reload(); // this will help relaod the controller after login. I hope.
 
-  var loginObj = $firebaseSimpleLogin(new Firebase($scope.URL));
+  //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
+  var ref = new Firebase($scope.URL);
 
   $scope.list = [];
   
   var clubRef = new Firebase($scope.URL + "/clubs")
 
 
-  loginObj.$getCurrentUser().then(function(currentUser){
+  ref.onAuth(function(currentUser){
+      // clublistId = currentUser.uid.split(":")[1]
 
        $scope.goToMessages = function(clublistId, count){
         $state.go('app.single', {clublistId: clublistId})
@@ -79,20 +90,23 @@ angular.module('others', [])
 
   
 
-  loginObj.$getCurrentUser().then(function(currentUser){
-    var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.id + "/clubs")
+    ref.onAuth(function(currentUser){
+     // currentUser.id = currentUser.uid.split(":")[1]
+
+
+    var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
     userIdClubRef.on('value', function(res){
-      console.log(res.val())
+      //console.log(res.val())
       res.forEach(function(childSnapshot){
 
-        console.log(childSnapshot.name())
+        //console.log(childSnapshot.key())
 
-        clubRef.child(childSnapshot.name()).on('value', function(snap){
+        clubRef.child(childSnapshot.key()).on('value', function(snap){
 
-          console.log(snap.name())
+          //console.log(snap.key())
 
-          var messagebox = snap.val().members[currentUser.id].messagebox
+          var messagebox = snap.val().members[currentUser.uid].messagebox
           var messageboxCount = 0; 
 
              if (angular.isDefined(messagebox)) {
@@ -106,24 +120,25 @@ angular.module('others', [])
 
              };
 
-              console.log(messageboxCount)
-              console.log(messagebox)
+              // console.log(messageboxCount)
+              // console.log(messagebox)
            
 
-           var position = snap.val().members[currentUser.id].position || {}
+           var position = snap.val().members[currentUser.uid].position || {}
            var item = {}
-            console.log(snap.val())
-           // console.log(snap.val());
+           //console.log(snap.val())
+           
 
-           item.id = snap.name()
+           item.id = snap.key()
            item.name = snap.val().name
            item.description = snap.val().description
            item.avatar = snap.val().avatar
            item.messageboxCount = messageboxCount;
            item.position = position;
+  
+           if ((position === 'FOUNDER' || position === 'VP HR') && angular.isDefined(snap.val().requests)){
+             item.requestCount = Object.keys(snap.val().requests).length;  
 
-           if (position === 'FOUNDER' || position === 'VP HR'){
-             item.requests = snap.val().requests;  
            }
 
            $timeout(function(){
@@ -147,13 +162,13 @@ angular.module('others', [])
 
 .controller('IntroCtrl', function($scope, $state, $firebaseSimpleLogin) {
 
-  var dataRef = new Firebase($scope.URL);
-  var loginObj = $firebaseSimpleLogin(dataRef)
+  // var dataRef = new Firebase($scope.URL);
 
-  loginObj.$getCurrentUser().then(function(currentUser){
+  //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
+  var ref = new Firebase($scope.URL);
 
-
-
+    ref.onAuth(function(currentUser){
+     
 
    if(currentUser !== null){
      $state.go('app.clublists')
@@ -166,28 +181,33 @@ angular.module('others', [])
 
 .controller('SearchCtrl', function($scope, $state, $firebaseSimpleLogin, $firebase) {
 
-  var dataRef = new Firebase($scope.URL);
-  var loginObj = $firebaseSimpleLogin(dataRef)
+  // var dataRef = new Firebase($scope.URL);
+
+ //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
+  var ref = new Firebase($scope.URL);
+
   var clubRef = new Firebase($scope.URL + "/clubs")
 
   //use Object in view by declaring it here
 
 // clubRef.on('value', function(res){
  $scope.clubs = [];
- loginObj.$getCurrentUser().then(function(currentUser){
+
+   ref.onAuth(function(currentUser){
+      //currentUser.id = currentUser.uid.split(":")[1]
 
   clubRef.once('value', function(dataSnapshot){
       //console.log(dataSnapshot.val())
 
       dataSnapshot.forEach( function(childSnapshot){
 
-       if(!childSnapshot.hasChild('members/' + currentUser.id)){
+       if(!childSnapshot.hasChild('members/' + currentUser.uid)){
 
         var item = childSnapshot.val()
-        item.id = childSnapshot.name()
+        item.id = childSnapshot.key()
         item.memberCount = childSnapshot.child('members').numChildren();
 
-        if(childSnapshot.hasChild( "requests/" + currentUser.id )){
+        if(childSnapshot.hasChild( "requests/" + currentUser.uid )){
           item.pendding = true;
         }
 
@@ -213,12 +233,13 @@ angular.module('others', [])
 // })
 $scope.joinRequest = function(clublistId){
 
-  loginObj.$getCurrentUser().then(function(currentUser){
+    ref.onAuth(function(currentUser){
+      //currentUser.id = currentUser.uid.split(":")[1]
 
 
     var item = {}
       //console.log(currentUser.id)
-      item[currentUser.id] = currentUser.email;
+      item[currentUser.uid] = currentUser.password.email;
       clubRef.child(clublistId + "/requests").update(item,function(error){
 
         if(error === null){

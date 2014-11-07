@@ -1,9 +1,9 @@
 <ion-modal-view>
-  <ion-header-bar>
-  <h1 class="title">Creat New Club</h1>
-  <div class="buttons">
-    <button class="button button-clear" ng-click="closeCreateClubModal()">Close</button>
-  </div>
+<ion-header-bar>
+<h1 class="title">Creat New Club</h1>
+<div class="buttons">
+	<button class="button button-clear" ng-click="closeCreateClubModal()">Close</button>
+</div>
 </ion-header-bar>
 <ion-content class="has-header" ng-controller="CreateCtrl">
 <h1>Create</h1>
@@ -18,15 +18,15 @@
 		<input ng-model="club.description" type="text">
 	</label>
 
-		<div id="messageBox" class="col col-75">
-			<img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
-				 alt="image message NOT shown" height="80" width="80"><br>
-		</div>
-		<div class="col button button-clear " ng-click="takePicture()">
-			<i class="icon ion-camera theme"></i> Add Profile Picture
-		</div>
+	<div id="messageBox" class="col col-75">
+		<img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
+		alt="image message NOT shown" height="80" width="80"><br>
+	</div>
+	<div class="col button button-clear " ng-click="takePicture()">
+		<i class="icon ion-camera theme"></i> Add Profile Picture
+	</div>
 </div>
-<button class="button button-block button-positive" ng-click="createClub(club)"> Create New Club </button>
+<button ng-disabled="disable" class="button button-block button-positive" ng-click="createClub(club); disable=true"> Create New Club </button>
 
 
 

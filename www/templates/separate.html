@@ -1,5 +1,6 @@
 
-<ion-view class="separate bar-title" title="{{separateBar.email | shaveEmail}}[{{separateBar.position}}]"  ng-controller="SeparateCtrl">
+<ion-view ng-class="{'separate-members-only bar-title': membersOnly}" 
+	class="separate bar-title" title="{{separateBar.email | shaveEmail}}[{{separateBar.position}}S]"  ng-controller="SeparateCtrl">
 
 <ion-nav-buttons side="right">
 <a ng-show="rightToAdd" style="font-size:150%; padding-right:5px;" class="tab tabs-icon-only" ng-click="openModal()">
@@ -9,8 +10,9 @@
 
 <ion-content class="has-header has-footer">
 
+<button ng-if="recievedMessages.length > 7" class="button button-small button-block button-stable" ng-click="loadMore()">load more</button>
 
-		<div ng-show="openSearch">
+	<!-- 	<div ng-show="openSearch">
 
 			<div class="item-input-inset">
 				<label style="padding-right: 5%;" class="toggle toggle-dark">
@@ -32,7 +34,7 @@
 			<div ng-hide="checked" style="padding-left: 20%;">
 				<ul> (messages individuals)
 					<li ng-repeat="user in allUsers  | filter:email | limitTo:5">
-						<a href ng-click="toPerson(user.id)">{{user.email}}</a>
+						<a href ng-click="toPerson(user.id)">{{user.password.email}}</a>
 					</li>
 				</ul>
 			</div>
@@ -44,18 +46,18 @@
 					</li>
 				</ul>
 			</div>
-			<!-- {{allUsers}} -->
+		
 			<hr>
 
-		</div>
+		</div> -->
 
-		<div  ng-class="{'message-container-me': recievedMessage.sender.id === me.id,
-				'message-container': recievedMessage.sender.id !== me.id}" 
+		<div  ng-class="{'message-container-me': recievedMessage.sender.uid === me.uid,
+				'message-container': recievedMessage.sender.uid !== me.uid}" 
 				ng-repeat="recievedMessage in recievedMessages" ng-init="scrollBottom()" >
 
 			
-				<div ng-class="{'message-me': recievedMessage.sender.id === me.id,
-					'message': recievedMessage.sender.id !== me.id}" >
+				<div ng-class="{'message-me': recievedMessage.sender.uid === me.uid,
+					'message': recievedMessage.sender.uid !== me.uid}" >
 					<div>
 						<img ng-if="!!recievedMessage.message.image" class="full-image"
 						ng-src="data:image/jpeg;base64,{{recievedMessage.message.image}}" 
@@ -67,19 +69,19 @@
 					
 				</div>	
 				<div class="dim" 
-				     ng-class="{'message-title-me': recievedMessage.sender.id === me.id}" >
+				     ng-class="{'message-title-me': recievedMessage.sender.uid === me.uid}" >
 				     {{recievedMessage.createdAt | timeago:ago}}
 				 </div>	
 
 
 				<div class="row dim">
-<!-- 
-						<a ng-hide="recievedMessage.sender.id === me.id" class="message-title" ng-click="toPerson(recievedMessage.sender.id)"> {{recievedMessage.sender.email | shaveEmail}}
-							<i class="ion-reply"></i>
-						</a>
-						<a ng-hide="recievedMessage.sender.id === me.id" class="message-title" ng-click="toPeople(recievedMessage.position)">{{recievedMessage.position}}
+
+						<div ng-hide="recievedMessage.sender.uid === me.uid" class="message-title" ng-click="toPerson(recievedMessage.sender.uid)"> {{recievedMessage.sender.password.email | shaveEmail}}
+							<!-- <i class="ion-reply"></i> -->
+						</div>
+						<!-- <div ng-hide="recievedMessage.sender.uid === me.uid" class="message-title" ng-click="toPeople(recievedMessage.position)">{{recievedMessage.position}}
 							<i class="ion-reply-all"></i>
-						</a> -->
+						</div> -->
 					
 				</div>
 				
