@@ -157,9 +157,11 @@ $scope.sendMessage = function(message){
          position: positionSnapshot.val(),
          rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}).then(function(ref){
 
-            var messageboxItem = {}
-            messageboxItem[currentUser.uid] = true;
+             var messageboxItem = {}
+            messageboxItem[$scope.currentUser.uid] = true;
+            if(stateParams.rule.split(",").length === 1){
             clubRef.child("members/" + $stateParams.rule + "/messagebox").update(messageboxItem)
+            }
 
            $scope.imageData = "" /* clean the scope from lingering around for next messages */
 
