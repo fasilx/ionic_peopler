@@ -1,6 +1,6 @@
 angular.module('separate', [])
 .controller('SeparateCtrl', function($scope, $stateParams, $firebase, $ionicScrollDelegate,
- $firebaseSimpleLogin, $ionicModal, capturePictureSrvc, $state) {
+ $firebaseSimpleLogin, $ionicModal, capturePictureSrvc, $state, $timeout) {
 
 var clubRef = new Firebase($scope.URL + "/clubs").child($stateParams.clublistId);
 var clubSync = $firebase(clubRef);
@@ -16,7 +16,6 @@ var ref = new Firebase($scope.URL)
 
  $scope.scrollBottom = function(){
   if(!$scope.ignoreScrollBottom){
-
    $ionicScrollDelegate.scrollBottom();
  }
  
@@ -24,8 +23,7 @@ var ref = new Firebase($scope.URL)
 }
 
   $scope.imageData = ""; // if picture is taken use that, otherwise use empty string
-  $scope.takePicture = function(){
-      
+  $scope.takePicture = function(){   
        capturePictureSrvc.takePicture().then(function(imageMelse) {
       $scope.imageData = imageMelse;
       
@@ -33,7 +31,7 @@ var ref = new Firebase($scope.URL)
 }
 
 
-  if(angular.isDefined($stateParams.rule)){
+  //if(angular.isDefined($stateParams.rule)){
 
     if ($stateParams.messageType === 'person') {
       var messageRef = messagePersonRef;
@@ -71,15 +69,22 @@ var ref = new Firebase($scope.URL)
 
              load =  load + 10;
 
-            var list = $firebase(messageRef.limit(load)).$asArray();
-
-              list.$loaded().then(function(){ 
-
-                list.pop();
-                list.pop(); // remove 'rule' and 'sender' from array. they are methadata, not actual
-                $scope.recievedMessages = list;
-
+      
+                messageRef.limitToLast(load).on('value',function(allMessages){
+                $timeout(function() {
+                   $scope.$apply(function(){
+                    
+                    $scope.recievedMessages = allMessages.val()
+                    
+                     $scope.recievedMessagesLength = allMessages.numChildren()
+                     console.log($scope.recievedMessagesLength)
+                })
+                }); 
+              
+               
               })
+      
+
             $scope.ignoreScrollBottom = true;
             //$ionicScrollDelegate.scrollTop();
              console.log("scrolling top")
@@ -88,22 +93,36 @@ var ref = new Firebase($scope.URL)
 
       
       $scope.ignoreScrollBottom = false;  //set this to false if 'load more' button is not pressed
-      var list = $firebase(messageRef.limit(load)).$asArray();
+      // var list = $firebase(messageRef.limit(load)).$asArray();
 
-        list.$loaded().then(function(){ 
+      //   list.$loaded().then(function(){ 
 
-          list.pop();
-          list.pop(); // remove 'rule' and 'sender' from array. they are methadata, not actual
-          $scope.recievedMessages = list;
+      //     list.pop();
+      //     list.pop(); // remove 'rule' and 'sender' from array. they are methadata, not actual
+      //     $scope.recievedMessages = list;
 
+      //   })
+      
+      messageRef.limitToLast(load).on('value',function(allMessages){
+        $timeout(function() {
+           $scope.$apply(function(){
+
+                console.log(allMessages.val())
+            $scope.recievedMessages = allMessages.val()
+            
+             $scope.recievedMessagesLength = allMessages.numChildren()
+             console.log($scope.recievedMessagesLength)
         })
-
+        }); 
+      
+       
+      })
       
 
 
   //console.log(list)
 
-}
+// }
 
 
   ref.onAuth(function(currentUser){
@@ -132,7 +151,7 @@ $scope.sendMessage = function(message){
 
           var messageboxItem = {}
           messageboxItem[$scope.currentUser.uid] = true;
-          if(stateParams.rule.split(",").length === 1){
+         if($stateParams.rule.split(",").length === 1){ 
           clubRef.child("members/" + $stateParams.rule + "/messagebox").update(messageboxItem)
           }
 
@@ -159,7 +178,7 @@ $scope.sendMessage = function(message){
 
              var messageboxItem = {}
             messageboxItem[$scope.currentUser.uid] = true;
-            if(stateParams.rule.split(",").length === 1){
+            if($stateParams.rule.split(",").length === 1){
             clubRef.child("members/" + $stateParams.rule + "/messagebox").update(messageboxItem)
             }
 

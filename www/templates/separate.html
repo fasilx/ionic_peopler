@@ -10,7 +10,7 @@
 
 <ion-content class="has-header has-footer">
 
-<button ng-if="recievedMessages.length > 7" class="button button-small button-block button-stable" ng-click="loadMore()">load more</button>
+<button  ng-if="recievedMessagesLength > 9" class="button button-small button-block button-stable" ng-click="loadMore()">load more</button>
 
 	<!-- 	<div ng-show="openSearch">
 
@@ -53,7 +53,7 @@
 
 		<div  ng-class="{'message-container-me': recievedMessage.sender.uid === me.uid,
 				'message-container': recievedMessage.sender.uid !== me.uid}" 
-				ng-repeat="recievedMessage in recievedMessages" ng-init="scrollBottom()" >
+				ng-repeat="recievedMessage in recievedMessages " ng-init="scrollBottom()" >
 
 			
 				<div ng-class="{'message-me': recievedMessage.sender.uid === me.uid,

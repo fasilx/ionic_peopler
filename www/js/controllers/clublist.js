@@ -15,7 +15,6 @@ angular.module('clublist', [])
 
  $scope.scrollBottom = function(){
   if(!$scope.ignoreScrollBottom){
-
    $ionicScrollDelegate.scrollBottom();
  }
 
@@ -35,6 +34,7 @@ angular.module('clublist', [])
          console.log(messagebox)       
     })
 })
+  
 
 $rootScope.$on('newMessage', function(value, data) {
 
@@ -253,19 +253,41 @@ $rootScope.$on('newMessage', function(value, data) {
   // }
 
   var load = 10;
+
   $scope.loadMore = function(){
       // adds 10 more data everytime it is called.
-
+        $scope.ignoreScrollBottom = true;
        load =  load + 10;
-       $scope.recievedMessages = $firebase(messageAllRef.limit(load)).$asArray();
-       $scope.ignoreScrollBottom = true;
+         messageAllRef.limitToLast(load).on('value',function(allMessages){
+            $timeout(function() {
+               $scope.$apply(function(){
+                $scope.recievedMessages = allMessages.val()
+                $scope.recievedMessagesLength = allMessages.numChildren()
+                console.log($scope.recievedMessagesLength)
+            })
+            }); 
+          
+            console.log($scope.recievedMessages)
+          })
+     
        //$ionicScrollDelegate.scrollTop();
        console.log("scrolling top")
 
   }
   $scope.ignoreScrollBottom = false;  //set this to false if 'load more' button is not pressed
   //message recieved ===============================================
-  $scope.recievedMessages = $firebase(messageAllRef.limitToFirst(load)).$asArray();
+      
+      messageAllRef.limitToLast(load).on('value',function(allMessages){
+        $timeout(function() {
+           $scope.$apply(function(){
+            $scope.recievedMessages = allMessages.val()
+             $scope.recievedMessagesLength = allMessages.numChildren()
+             console.log($scope.recievedMessagesLength)
+        })
+        }); 
+      
+       
+      })
  //message recieved ===============================================
  console.log($scope.recievedMessages)
 
