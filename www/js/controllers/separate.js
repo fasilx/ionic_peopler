@@ -50,7 +50,7 @@ var ref = new Firebase($scope.URL)
     else
     {
       var messageRef = messageGroupRef;
-  $scope.separateBar = {position: $stateParams.position}
+      $scope.separateBar = {position: $stateParams.position}
      
       // if($stateParams.refName.split) { //rule in this case tells us whether this is open dicsussion or private among the gruope members
       //    $scope.separateBar = {position: $stateParams.position}

@@ -138,25 +138,40 @@ $rootScope.$on('newMessage', function(value, data) {
 
    }
 
-   $scope.toPeople = function(title){
+   $scope.toPeople = function(title, isGroup){
     // $rootScope.thisClub = $stateParams.clublistId
      ref.onAuth(function(currentUser){
      // currentUser.id = currentUser.uid.split(":")[1]
 
       $scope.currentUser = currentUser; // set current user in scope while scope is alive
 
-     
-      var rule = [];
-     
-      rule.push(currentUser.uid)
-      //var positionRef = clubRef.child("members");
+      if(isGroup){
+        var position = "RANDOM GROUP"
+        rule = title //rule now is array of users uid
+        rule.push(currentUser.uid)
+      }
+      else
+      {
 
-      clubRef.child('members').once( 'value', function(dataSnapshot) {  /* handle read data */ 
-        angular.forEach(dataSnapshot.val(), function(value, key) {
-          if(value.position === title && key !== currentUser.uid){
-            rule.push(key);
-          }
-        });
+            var rule = [];
+            var position = title;
+            rule.push(currentUser.uid)
+
+            //var positionRef = clubRef.child("members");
+
+            clubRef.child('members').once( 'value', function(dataSnapshot) {  /* handle read data */ 
+
+              angular.forEach(dataSnapshot.val(), function(value, key) {
+
+                if(value.position === title && key !== currentUser.uid){
+                  rule.push(key);
+                }
+              
+              });
+            })
+
+      }
+     
 
         // var membership = ""
         var refName = rule.sort().toString()  //creates one locaiton for all groupe messages
@@ -184,12 +199,12 @@ $rootScope.$on('newMessage', function(value, data) {
            $scope.toPerson(rule.splice(indexOf(currentUser.uid), 1).toString())
         }else
         {
-         $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: rule, messageType: 'group', position:title});
+         $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: rule, messageType: 'group', position: position});
         }
 
       });
 
-    });
+    
     
   }
 
@@ -390,6 +405,29 @@ $rootScope.$on('newMessage', function(value, data) {
 
 
   }
+
+
+  $scope.memberUsers = function(users){
+
+  console.log(users)
+
+  var rule = []
+   $scope.memberModal.hide()
+   //reset data value in allUsers arry
+    angular.forEach(  $scope.allUsers, function(value, key) {
+
+      if(value.data){
+        rule.push(value.id) //push it up then reset it back to false
+        value.data = false;
+      }
+       
+      
+    });
+    console.log("akljsdfkljasdklfjaskldfjklasjdfklasdjfklasdjfkljasdklfj")
+    console.log(rule)
+    $scope.toPeople(rule,true); //send true to toPeopele() so it can know this sent it.
+ 
+}
 
   $scope.addRequestingMember = function(id,email,position){
 

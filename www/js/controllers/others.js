@@ -104,7 +104,7 @@ angular.module('others', [])
 
         clubRef.child(childSnapshot.key()).on('value', function(snap){
 
-          //console.log(snap.key())
+          console.log(snap.key())
 
           var messagebox = snap.val().members[currentUser.uid].messagebox
           var messageboxCount = 0; 
