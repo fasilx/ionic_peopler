@@ -1,6 +1,6 @@
 
 angular.module
-('starter', ['ionic', 'firebase', 'others', 'clublist',
+('starter', ['ionic', 'firebase', 'others', 'clublist', 'ui.utils',
              'main','separate','ngCordova', 'monospaced.elastic','service'])
 
 .run(function($ionicPlatform) {

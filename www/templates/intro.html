@@ -1,50 +1,62 @@
 
-<ion-view ng-controller="IntroCtrl">
-
-<ion-slide-box does-continue="true">
+<ion-slide-box does-continue="true" auto-play="true" ng-controller="IntroCtrl">
     <ion-slide style="background-image: url('img/opener1.jpg');">
-        <h3>Thank you for choosing Peopler</h3>
+
+        <div class="row responsive-sm" >
+          <h3 class="col">Organize tasks</h3>
+        </div>
+        
         <div id="logo">
           <img style="border-radius:50%" src="img/icon-72.png">
         </div>
-        <p>
-          Use it to orginize you wedding, your trip or you business
-        </p>
-        <p>
-          You become the Founder and Hire your friends and family
-        </p>
-        <button class="button button-positive" ng-click="login()"> <b> sign up or login</b> </button>
+          
+          <div class="row responsive-sm">
+              <div class="col">Assign tasks to groups or person</div>
+              <div class="col">In groups or individuals</div>
+              <div class="col">All from you mobile or tablet</div>
+              <div class="col">In real time</div>
+            </div>
+
+        <button class="button button-block button-balanced" ng-click="login()"> <b> Sign up OR Login</b> </button>
+
+
     </ion-slide>
     <ion-slide style="background-image: url('img/opener2.jpg');">
-        <h3>Orginize hierarchicaly</h3>
+
+        <h3>Organize in hierarchy and named titles</h3>
         <div id="logo">
           <img style="border-radius:50%" src="img/icon-72.png">
         </div>
-        <p>
-          You add people and assign them a title and duties
-        </p>
-        <p>
-          You can communicate tasks and things to do by group or individually
-        </p>
-        <button class="button button-positive" ng-click="login()"> <b> sign up or login</b> </button>
+
+          <div class="row responsive-sm">
+              <div class="col">You create a Club and assign people titles</div>
+              <div class="col">People request to join you Club</div>
+              <div class="col">Communicate with all, a sub group or person </div>
+              <div class="col">You'll have C-suites and HR groups in a Club</div>
+            </div>
+
+        <button class="button button-block button-balanced" ng-click="login()"> <b> Sign up OR Login</b> </button>
+
     </ion-slide>
     <ion-slide style="background-image: url('img/opener3.jpg');">
-        <h3>Message all or by Group</h3>
+
+        <h3>You can be a CEO in your Club and a secretary in anther</h3>
         <div id="logo">
           <img style="border-radius:50%" src="img/icon-72.png">
         </div>
-        <p>
-          Orginze everything from you kids soccer
-        </p>
-        <p>
-          To any thing only you can imagine
-        </p>
-        <button class="button button-positive" ng-click="login()"> <b> sign up or login</b> </button>
+
+          <div class="row responsive-sm">
+          <div class="col">Be the CEO of your wedding</div>
+          <div class="col">Or a Treasurer of your kids soccer team</div>
+          <div class="col">A member of you church group</div>
+          <div class="col">A CFO of your family group</div>
+        </div>
+
+        <button class="button button-block button-balanced" ng-click="login()"> <b> Sign up OR Login</b> </button>
+
     </ion-slide>
 </ion-slide-box>
 
-
-</ion-view>
 
 
 

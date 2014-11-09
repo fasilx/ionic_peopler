@@ -4,7 +4,7 @@ angular.module('main', [])
                                 $state, $rootScope, capturePictureSrvc, defaultImage) {
   
 
-  $scope.loginData = {};
+  $scope.loginData = {username: "", password: "", passwordConfirmation: ""};
   $scope.URL = "https://peopler.firebaseio.com"
   $scope.defaultImage = defaultImage;
   var ref = new Firebase($scope.URL)
@@ -108,16 +108,24 @@ angular.module('main', [])
 
 
       // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
+  $scope.doLogin = function($event) {
 
-        ref.authWithPassword({
+  // more validation
+  if ($scope.loginData.username === "" || $scope.loginData.password === "") {
+    $scope.error = "email or password is required";
+    //$scope.$apply();
+    return;
+  }
+    //$event.preventDefault();
+
+    ref.authWithPassword({
               email: $scope.loginData.username,
               password: $scope.loginData.password
 
       }, function(error, currentUser) {
 
       if(error === null){
-
+        console.log(error)
         $scope.currentUser = currentUser;
         
 
@@ -149,11 +157,17 @@ angular.module('main', [])
 $scope.doSignup = function() {
 
           //check password confirmation
-
             if($scope.loginData.passwordConfirmation !== $scope.loginData.password){
 
               $scope.error = "Password confirmation does not match";
               $scope.$apply();
+              return;
+            }
+
+                  // more validation
+            if ($scope.loginData.username === "" || $scope.loginData.password === "" || $scope.loginData.passwordConfirmation === "") {
+              $scope.error = "email or password and confirmation is required";
+              //$scope.$apply();
               return;
             }
 

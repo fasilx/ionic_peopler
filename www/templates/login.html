@@ -1,6 +1,6 @@
 <div class="modal">
   <ion-header-bar>
-    <h1 class="title">Authentication</h1>
+    <h3 class="title">Sign Up or Login</h3>
  
     <div class="buttons">
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
@@ -8,11 +8,11 @@
   </ion-header-bar>
   <ion-content ng-init="createUser=false">
 
-  <a ng-click="createUser=!createUser" class="row responsive-sm">
+  <a ng-click="createUser=!createUser;" class="row responsive-sm">
   <div class="col message" ng-hide="createUser"
-       style="text-align:center; font-size:90%;color:#009999"><b>Login Below</b> or click here to signup</div>
+       style="text-align:center;color:#009999"><b class="ion-arrow-right-c"></b> Signup Here</div>
   <div class="col message" ng-show="createUser" 
-        style="text-align:center; font-size:90%;color:#FF9900"><b>Signup Below</b> or click here to login</div>
+        style="text-align:center;color:#FF9900"><b class="ion-arrow-right-c"></b> Login Here</div>
   </a>
 
 
@@ -21,27 +21,48 @@
     
       <div class="list" >
       
-
+        <form>
           <div ng-show="error" class="row responsive-sm">
           
             <div class="col error message" style="text-align:center">{{error}}</div>
 
           </div>
 
+          <div ng-hide="createUser">
+           <label class="item item-input">
+            <!-- <span class="input-label">Username</span> -->
+            <input type="text" ng-model="loginData.username" 
+            placeholder="email" ui-keypress="{enter:'doSignup($event)'}">
+          </label>
+          <label class="item item-input">
+            <!-- <span class="input-label">Password</span> -->
+            <input type="password" ng-model="loginData.password" 
+            placeholder="password" ui-keypress="{enter:'doLogin($event)'}">
+          </label>
+        </div>
 
-        <label class="item item-input">
-          <span class="input-label">Username</span>
-          <input type="text" ng-model="loginData.username">
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Password</span>
-          <input type="password" ng-model="loginData.password">
-        </label>
-           <label class="item item-input" ng-show="createUser">
-          <span class="input-label">Password Confirmation</span>
-          <input type="password" ng-model="loginData.passwordConfirmation">
-        </label>
+        <div ng-show="createUser">
+          <label class="item item-input">
+            <!-- <span class="input-label">Username</span> -->
+            <input type="text" ng-model="loginData.username" 
+            placeholder="email" ui-keypress="{enter:'doSignup($event)'}">
+          </label>
+          <label class="item item-input">
+            <!-- <span class="input-label">Password</span> -->
+            <input type="password" ng-model="loginData.password" 
+            placeholder="password" ui-keypress="{enter:'doSignup($event)'}">
+          </label>
+          <label class="item item-input" >
+            <!-- <span class="input-label">Password Confirmation</span> -->
+            <input type="password" ng-model="loginData.passwordConfirmation" 
+            placeholder="confirm password" ui-keypress="{enter:'doSignup($event)'}">
+          </label>
 
+        </div>
+
+
+
+      </div>
             <div id="messageBox" class="col col-75">
             <img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
                  alt="image message NOT shown" height="80" width="80"><br>
@@ -51,7 +72,7 @@
             </div>
 
         <label class="item" ng-hide="createUser">
-          <button class="button button-block button-positive" ng-click="doLogin()">Log In</button>
+          <button class="button button-block button-positive" ng-click="doLogin($event)">Log In</button>
           <!-- <button ng-show="createUser" class="button button-block button-positive" ng-click="doSignup()">Sign Up</button> -->
         </label>
         
@@ -59,8 +80,7 @@
               <!-- <button ng-hide="createUser" class="button button-block button-positive" ng-click="doLogin()">Log In</button> -->
           <button  class="button button-block button-positive" ng-click="doSignup()">Sign Up</button>
         </label>
-
-      </div>
+</form>
     
   </ion-content>
 </div>

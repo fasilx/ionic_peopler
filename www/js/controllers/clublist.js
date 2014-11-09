@@ -405,10 +405,12 @@ console.log(message)
        
       
     });
-console.log(rule)
-    if(rule === []){
+    console.log(rule)
+    if(rule){
 
       $scope.groupFormingError = "Please add at least one name"
+    
+      return; 
 
     }else{
 

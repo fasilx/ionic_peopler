@@ -9,13 +9,13 @@
 
 
 
-    <div class="button-bar">
+    <div class="button-bar" style="font-size:80%;">
       <a class="button" ng-click="showRequests=true;showByEmail=false;showAllMembers=false">
-        <i style="font-size:90%;" class="theme">Requests</i></a>
+        <i  class="theme">requests</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=true;showAllMembers=false">
-        <i style="font-size:90%;" class="theme">Email Add</i></a>
+        <i  class="theme">add by email</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=false;showAllMembers=true">
-        <i style="font-size:90%;" class="theme">Select People</i></a>
+        <i  class="theme">random group</i></a>
     </div>
 
     <br><br>
@@ -23,10 +23,13 @@
     <div ng-show="showRequests">
        
               <div class="bar bar-subheader">
-                <h2 class="title">Recent Requests</h2>
+                <div class="title">Accept requests to join your club here</div>
               </div>
               <br>
-              <div ng-show="requests === null">There are no requests at this point
+
+              <div  class="row responsive-sm"> 
+                <div class="message col" style="text-align:center" ng-show="requests === null"> There are no requests at this point
+                </div>
               </div>
             
               <form>
@@ -58,7 +61,7 @@
     <div ng-show="showByEmail">
 
       <div class="bar bar-subheader">
-        <h2 class="title">Add Members Email Here. <br> <i style="font-size:80%;">Must have Peopler's account</i></h2>
+        <div class="title">Add Members Email Here. Person you add must have Peopler's account</div>
       </div>
       <br>
        <form name="myForm"> 
@@ -99,12 +102,16 @@
 
     <div ng-show="showAllMembers">
         <div class="bar bar-subheader">
-        <h2 class="title">Form  a Group Messaging<br> <i style="font-size:80%;">{{groupName}}</i></h2>
+        <div class="title">Form  a Group Messaging ... {{groupName}}</div>
       </div>
     
       <br>
+              <div  ng-if="groupFormingError" class="row responsive-sm"> 
+                <div class="error message col" style="text-align:center" ng-show="requests === null">
+                  {{groupFormingError}}
+                </div>
+              </div>
       <ul class="list">
-        <i ng-if="groupFormingError" class="error">{{groupFormingError}}</i>
 
         <li class="item item-checkbox" ng-repeat="user in allUsers" ng-if="user.email"> 
            <label class="checkbox">
