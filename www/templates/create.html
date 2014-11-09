@@ -6,16 +6,24 @@
 </div>
 </ion-header-bar>
 <ion-content class="has-header" ng-controller="CreateCtrl">
-<h1>Create</h1>
+
 
 <div class="list">
+
+	  <div ng-show="creationError" class="row responsive-sm">
+          
+            <div class="col error message" style="text-align:center">{{creationError}}</div>
+
+       </div>
+
+
 	<label class="item item-input">
 		<span class="input-label">Club Name</span>
-		<input ng-model="club.name" type="text">
+		<input name="name" ng-model="club.name" type="text">
 	</label>
 	<label class="item item-input">
 		<span class="input-label">Small Description</span>
-		<input ng-model="club.description" type="text">
+		<input name="description" ng-model="club.description" type="text">
 	</label>
 
 	<div id="messageBox" class="col col-75">
@@ -26,7 +34,9 @@
 		<i class="icon ion-camera theme"></i> Add Profile Picture
 	</div>
 </div>
-<button ng-disabled="disable" class="button button-block button-positive" ng-click="createClub(club); disable=true"> Create New Club </button>
+<button class="button button-block button-positive" ng-click="createClub(club);" > Create New Club </button>
+
+
 
 
 

@@ -13,6 +13,7 @@ angular.module('clublist', [])
  
 
 
+
  $scope.scrollBottom = function(){
   if(!$scope.ignoreScrollBottom){
    $ionicScrollDelegate.scrollBottom();
@@ -21,48 +22,19 @@ angular.module('clublist', [])
 
 }
 
- // $scope.$watch('messagebox', function(){
- //    alert("messagebox")
- // })
-
-  ref.onAuth(function(currentUser){
-  console.log(currentUser)
-  //currentUser.id = currentUser.uid.split(":")[1] //the new simple login does not proved id
-      $scope.me = currentUser;
+// get messages as they come
+$timeout(function() {
+  var currentUser = $scope.currentUser;
+    $scope.$apply(function(){
       messageboxSrvc.messagebox(currentUser.uid, $stateParams.clublistId).then(function(messagebox){
         $scope.messagebox = messagebox;
+        $scope.messageboxCount = messagebox.length
          console.log(messagebox)       
     })
 })
   
+});
 
-$rootScope.$on('newMessage', function(value, data) {
-
- 
-  $timeout(function() {
-  // anything you want can go here and will safely be run on the next digest.
-     $scope.$apply(function(){
-     $scope.messageboxCount = data.length;
-     // console.log(data.length + " .......before beep...........")
-     // // if(data.length > 0){
-     // //  $cordovaNativeAudio.play('recieve');
-     // // }
-     // // $scope.$apply()
-     // console.log(data.length + " .......after beep...........")
-  })
-
-})
-
- 
-  
-})
-
-// $scope.noMessage = function(messageboxLength){
-
-//   if(messageboxLength === null || messageboxLength === 0){
-//     $state.go('app.single', {clublistId: $stateParams.clublistId})
-//   }
-// }
 
  $scope.goToMessages = function() {
    $state.go('app.messagebox', {clublistId: $stateParams.clublistId})
@@ -75,6 +47,7 @@ $rootScope.$on('newMessage', function(value, data) {
 
  clubRef.child('members').once('value', function  (snap) {
  //$scope.allUsers = snap.val()
+ 
  $scope.allUsers = []; //this array was created for query filters to work properly in the view
       snap.forEach( function(childSnap){
         var item = {};
@@ -91,25 +64,27 @@ $rootScope.$on('newMessage', function(value, data) {
 })
 
 
+
  $scope.toPerson = function(person){
-     // $rootScope.thisClub = $stateParams.clublistId
+     
+    if($scope.currentUser){
+     
+      toPersonMethod(person, $scope.currentUser)
+    }else{
+
      ref.onAuth(function(currentUser){
-     // currentUser.id = currentUser.uid.split(":")[1]
-      $scope.currentUser = currentUser; // set current user in scope while scope is alive
+        toPersonMethod(person, currentUser)
+      });
 
-      // var rule = []
-      // rule.push(person);
-      // var item = {clublistId: $stateParams.clublistId, rule: rule, sender: currentUser.id, messageType: 'person'}
+ }
+}
 
+ var toPersonMethod = function(person, user){
+
+  var currentUser = user;
       var refName;
-        ////console.log(typeof person)
-          //console.log(typeof currentUser.id)
-        // messages should endup in the same location.
         if (person < currentUser.uid){
           refName = person + "," + currentUser.uid
-          //console.log("this if is called")
-          //console.log(refName)
-          // 177,178 or 177,177
         }else{
           //console.log("else is called")
 
@@ -118,6 +93,7 @@ $rootScope.$on('newMessage', function(value, data) {
           // 177,178 
         }
 
+        console.log(person)
       var messagePersonRef = new Firebase($scope.URL + "/messages/" +
                                           $stateParams.clublistId + "/person/" + refName)
 
@@ -126,29 +102,38 @@ $rootScope.$on('newMessage', function(value, data) {
                                  sender: {person: currentUser.uid, futureLocation: false}
                                })
 
-      // ready the location to put message in
-      // var messageboxItem = {}
-      // messageboxItem[person] = false;
       clubRef.child("members/" + currentUser.uid + "/messagebox/" + person).remove()//(messageboxItem)
       
       // setTimeout(function(){ $state.go('app.separate', item );}, 3000)
-      $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: person, messageType: 'person', position: 'person'});
+      $state.go('app.separate', {clublistId: $stateParams.clublistId, 
+                                 refName: refName, rule: person, messageType: 'person', position: 'person'});
 
-    });
+    };
+ 
 
-   }
 
-   $scope.toPeople = function(title, isGroup){
-    // $rootScope.thisClub = $stateParams.clublistId
-     ref.onAuth(function(currentUser){
-     // currentUser.id = currentUser.uid.split(":")[1]
 
-      $scope.currentUser = currentUser; // set current user in scope while scope is alive
+$scope.toPeople = function(title, isGroup){
+    
+    if($scope.currentUser){
+      currentUser = $scope.currentUser
+      toPeopleMethod(title,isGroup)
+    }else{
+      ref.onAuth(function(currentUser){
+
+        toPeopleMethod(title,isGroup)
+      })
+    }
+  }
+
+var toPeopleMethod = function(title, isGroup){
 
       if(isGroup){
         var position = "RANDOM GROUP"
         rule = title //rule now is array of users uid
         rule.push(currentUser.uid)
+        console.log("is grouop is true")
+        console.log(rule)
       }
       else
       {
@@ -172,44 +157,35 @@ $rootScope.$on('newMessage', function(value, data) {
 
       }
      
-
-        // var membership = ""
-        var refName = rule.sort().toString()  //creates one locaiton for all groupe messages
-       
-        // if(rule.indexOf(currentUser.uid) === -1)
-        // {
-
-        //   membership = 'only'  //only members with this title in this loop
-        // }else
-        // { membership = 'open'} // someone other than this members is in the loop
-
-        var messageGroupRef = new Firebase($scope.URL + "/messages/" + 
-          $stateParams.clublistId + "/group/" + refName)
-
-        messageGroupRef.update({
-                               receiver: {people: rule.toString(), futureLocation: false}, 
-                                 sender: {person: currentUser.uid, futureLocation: false}
-                               })
-
-       
-
+      
         // if there is only one in a group, make this a personal message.
         // that means two people inluding the sender
         if(rule.length === 2){
-           $scope.toPerson(rule.splice(indexOf(currentUser.uid), 1).toString())
-        }else
-        {
-         $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: rule, messageType: 'group', position: position});
+
+           var splice = rule.splice(rule.indexOf(currentUser.uid), 1)
+           $scope.toPerson(rule.toString()) //send a String not an array. OK?
+
         }
+        else
+        {
 
-      });
+                // var membership = ""
+                var refName = rule.sort().toString()  //creates one locaiton for all groupe messages
+            
+                var messageGroupRef = new Firebase($scope.URL + "/messages/" + 
+                  $stateParams.clublistId + "/group/" + refName)
 
-    
-    
+                messageGroupRef.update({
+                                       receiver: {people: rule.toString(), futureLocation: false}, 
+                                         sender: {person: currentUser.uid, futureLocation: false}
+                                       })
+
+            $state.go('app.separate', {clublistId: $stateParams.clublistId, refName: refName, rule: rule, messageType: 'group', position: position});
+        }    
   }
 
-  $scope.imageData = ""; // if picture is taken use that, otherwise use empty string
-  $scope.takePicture = function(){
+$scope.imageData = ""; // if picture is taken use that, otherwise use empty string
+$scope.takePicture = function(){
 
        capturePictureSrvc.takePicture().then(function(imageMelse) {
       $scope.imageData = imageMelse;
@@ -217,40 +193,9 @@ $rootScope.$on('newMessage', function(value, data) {
   })
 }
 
-   // $scope.imageData = ""; 
-   // capturePictureSrvc.takePicture().then(function(imageMelse) {
-   //    $scope.imageData = imageMelse;
-   //  });
 
 
-  //  $scope.imageData = ""; // start with empty string for image string store
-  //  $scope.takePicture  = function() {
-  //   var options = { 
-  //     quality : 75, 
-  //     destinationType : Camera.DestinationType.DATA_URL, 
-  //     sourceType : Camera.PictureSourceType.CAMERA, 
-  //     allowEdit : true,
-  //     encodingType: Camera.EncodingType.JPEG,
-  //     targetWidth: 100,
-  //     targetHeight: 100,
-  //     popoverOptions: CameraPopoverOptions,
-  //     saveToPhotoAlbum: true
-  //   };
-
-  //   $cordovaCamera.getPicture(options).then(function(imageData) {
-
-  //           // Success! Image data is base64 stringified already
-  //           //console.log("image upload successful")
-  //           $scope.imageData = imageData;
-
-
-
-  //         }, function(err) {
-  //           // An error occured. Show a message to the user
-  //           //console.log(err + "      ERRRRRRRRRRR")
-
-  //         });
-  // }
+  //message recieved =============================================== 
 
   var load = 10;
 
@@ -275,7 +220,7 @@ $rootScope.$on('newMessage', function(value, data) {
 
   }
   $scope.ignoreScrollBottom = false;  //set this to false if 'load more' button is not pressed
-  //message recieved ===============================================
+
       
       messageAllRef.limitToLast(load).on('value',function(allMessages){
         $timeout(function() {
@@ -288,76 +233,63 @@ $rootScope.$on('newMessage', function(value, data) {
       
        
       })
- //message recieved ===============================================
- console.log($scope.recievedMessages)
+    console.log($scope.recievedMessages)
+ // end message recieved ===============================================
 
+
+
+// sending messages ==================================================
   $scope.sendMessage = function(message){
-
-    var messageSync = $firebase(messageAllRef);
-
-
-    var messageData = {message: message, image: $scope.imageData}
 
     if($scope.currentUser){
 
-     // currentUser.id = currentUser.uid.split(":")[1]  //new firebase auth does not have id by default anymore. sucks
-
-      var position = clubRef.child("members/" + $scope.currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
-
-        messageSync.$push({sender: $scope.currentUser, message: messageData,
-         position: positionSnapshot.val(),
-         rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}).then(function(res) {
-
-          // var messageboxItem = {}
-          // messageboxItem[currentUser.id] = false;
-          // clubRef.child("memebers/" + person + "/messagebox").update(messageboxItem)
-         
-          $cordovaDialogs.beep(1)
-          console.log('beep......')
-          $scope.imageData = "" /* clean the scope from lingering around for next messages */
-          //alert("before beep")
-        
-           //alert("after beep")
-
-        });
-
-       });
-
+       var currentUser = $scope.currentUser
+       sendMessageMethod(message,currentUser)
 
     }else{
 
       ref.onAuth(function(currentUser){
-      //currentUser.id = currentUser.uid.split(":")[1]
 
-      $scope.currentUser = currentUser; // set current user in scope while scope is alive
-
-      var position = clubRef.child("members/" + currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
-
-
-        messageSync.$push({sender: currentUser, message: messageData,
-         position: positionSnapshot.val(),
-         rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}).then(function(res){
-
-          $cordovaDialogs.beep(1)
-          console.log('beep......')
-           $scope.imageData = "" /* clean the scope from lingering around for next messages */
-
-         });
-
-        //  if(angular.isDefined($stateParams.rule)){
-        //   messageSync.$update({ rule: $stateParams.rule, sender: currentUser.id });
-        // }
-
-      });
+        sendMessageMethod(message,currentUser)
 
     })
     }
 
   }
 
+var sendMessageMethod = function(message,currentUser){
+
+console.log("message....message")
+console.log(message)
+    var messageData = {message: message, image: $scope.imageData}
+
+        // currentUser.id = currentUser.uid.split(":")[1]  //new firebase auth does not have id by default anymore. sucks
+
+        var position = clubRef.child("members/" + currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
+
+          messageAllRef.push({sender: currentUser, message: messageData,
+           position: positionSnapshot.val(), createdAt: Firebase.ServerValue.TIMESTAMP}, function(res) {
+
+            // var messageboxItem = {}
+            // messageboxItem[currentUser.id] = false;
+            // clubRef.child("memebers/" + person + "/messagebox").update(messageboxItem)
+            console.log(res)
+            $cordovaDialogs.beep(1)
+            console.log('beep......')
+            $scope.imageData = "" /* clean the scope from lingering around for next messages */
+            //alert("before beep")
+          
+             //alert("after beep")
+
+          });
+
+         });
+
+  }
+
   $scope.newMember = {}
   $scope.requestingMember = {}
-  $scope.titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP DEPT2', 'VP DEPT3', 'MEMBER', 'GUEST'];
+  $scope.titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP ONE', 'VP TWO', 'MEMBER', 'GUEST'];
 
     ref.onAuth(function(currentUser){
      // currentUser.id = currentUser.uid.split(":")[1]
@@ -383,11 +315,7 @@ $rootScope.$on('newMessage', function(value, data) {
        
 
         } 
-  
-     
        })
-      
-       
    })
 
 
@@ -408,20 +336,22 @@ $rootScope.$on('newMessage', function(value, data) {
     
       var member_id =  Object.keys(snap.val())[0] 
 
+      $scope.addRequestingMember(member_id, $scope.newMember.email,$scope.newMember.position)
 
-      clubRef.child("members/" + member_id).set({position: $scope.newMember.position, email: $scope.newMember.email},function(){
-        //add club member ship in user location
-        var userIdRef = new Firebase($scope.URL + "/users/" + member_id + "/clubs")
-        var clublistId = $stateParams.clublistId;
+      // clubRef.child("members/" + member_id).set({position: $scope.newMember.position, 
+      //                                            email: $scope.newMember.email, messagebox: "init"},function(){
+      //   //add club member ship in user location
+      //   var userIdRef = new Firebase($scope.URL + "/users/" + member_id + "/clubs")
+      //   var clublistId = $stateParams.clublistId;
 
-           var obj = {};
-           obj[clublistId] = true;
-           userIdRef.update(obj) 
+      //      var obj = {};
+      //      obj[clublistId] = true;
+      //      userIdRef.update(obj) 
 
-        $scope.memberModal.hide()
+      //   $scope.memberModal.hide()
 
 
-      });
+      // });
 
     });
 
@@ -429,12 +359,42 @@ $rootScope.$on('newMessage', function(value, data) {
   }
 
 
-  $scope.memberUsers = function(users){
+  // var addMemberMethod = function(id, position, email){
+
+
+  //        clubRef.child("members/" + id).set({position: position, email: email, messagebox: "init"},function(){
+  //       //add club membership in user location
+  //       var userIdRef = new Firebase($scope.URL + "/users/" + id + "/clubs")
+  //       var clublistId = $stateParams.clublistId;
+
+  //          var obj = {};
+  //          obj[clublistId] = true;
+  //          userIdRef.update(obj) 
+
+  //          $scope.$apply(function(){
+
+  //             $scope.requestAdded = true;
+  //          })
+
+  //          // remove user from request location
+  //           var clubRequestRef = clubRef.child("requests");
+
+  //           clubRequestRef.child(id).remove(function(){
+  //             $scope.$apply();
+  //             console.log("user removed from requests")
+  //           });
+
+  //     });
+
+  // }
+
+
+  $scope.formGroup = function(users){
 
   console.log(users)
 
   var rule = []
-   $scope.memberModal.hide()
+  
    //reset data value in allUsers arry
     angular.forEach(  $scope.allUsers, function(value, key) {
 
@@ -445,15 +405,27 @@ $rootScope.$on('newMessage', function(value, data) {
        
       
     });
-    console.log("akljsdfkljasdklfjaskldfjklasjdfklasdjfklasdjfkljasdklfj")
-    console.log(rule)
-    $scope.toPeople(rule,true); //send true to toPeopele() so it can know this sent it.
+console.log(rule)
+    if(rule === []){
+
+      $scope.groupFormingError = "Please add at least one name"
+
+    }else{
+
+       $scope.memberModal.hide()
+       $scope.toPeople(rule,true); //send true to toPeopele() so it can know this sent it.
+       
+    }
+
+    // console.log("akljsdfkljasdklfjaskldfjklasjdfklasdjfklasdjfkljasdklfj")
+    // console.log(rule)
+    //$scope.toPeople(rule,true); //send true to toPeopele() so it can know this sent it.
  
 }
 
   $scope.addRequestingMember = function(id,email,position){
 
-         clubRef.child("members/" + id).set({position: position, email: email},function(){
+         clubRef.child("members/" + id).set({position: position, email: email, messagebox: "init"},function(){
         //add club membership in user location
         var userIdRef = new Firebase($scope.URL + "/users/" + id + "/clubs")
         var clublistId = $stateParams.clublistId;
@@ -470,7 +442,8 @@ $rootScope.$on('newMessage', function(value, data) {
            // remove user from request location
             var clubRequestRef = clubRef.child("requests");
             clubRequestRef.child(id).remove(function(){
-              //console.log("user removed from requests")
+              $scope.$apply();
+              console.log("user removed from requests")
             });
 
       });

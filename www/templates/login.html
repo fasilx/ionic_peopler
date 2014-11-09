@@ -1,6 +1,6 @@
 <div class="modal">
   <ion-header-bar>
-    <h1 class="title">Login / signup</h1>
+    <h1 class="title">Authentication</h1>
  
     <div class="buttons">
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
@@ -8,15 +8,27 @@
   </ion-header-bar>
   <ion-content ng-init="createUser=false">
 
-  <button ng-click="createUser=!createUser" class="button button-block button-light">
-  <span ng-hide="createUser">Sign Up</span><span ng-show="createUser">Log In</span>
-  </button>
+  <a ng-click="createUser=!createUser" class="row responsive-sm">
+  <div class="col message" ng-hide="createUser"
+       style="text-align:center; font-size:90%;color:#009999"><b>Login Below</b> or click here to signup</div>
+  <div class="col message" ng-show="createUser" 
+        style="text-align:center; font-size:90%;color:#FF9900"><b>Signup Below</b> or click here to login</div>
+  </a>
 
 
  
 
     
       <div class="list" >
+      
+
+          <div ng-show="error" class="row responsive-sm">
+          
+            <div class="col error message" style="text-align:center">{{error}}</div>
+
+          </div>
+
+
         <label class="item item-input">
           <span class="input-label">Username</span>
           <input type="text" ng-model="loginData.username">

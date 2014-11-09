@@ -2,46 +2,42 @@ angular.module('main', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, 
                                 $state, $rootScope, capturePictureSrvc, defaultImage) {
-  // Form data for the login modal
+  
+
   $scope.loginData = {};
   $scope.URL = "https://peopler.firebaseio.com"
-
-
-
   $scope.defaultImage = defaultImage;
-
-  // var dataRef = new Firebase($scope.URL);
-  //var ref = $firebaseSimpleLogin(dataRef)
   var ref = new Firebase($scope.URL)
 
-  ref.onAuth(function(currentUser){
+  // ref.onAuth(function(currentUser){
 
 
 
-     $scope.me = currentUser;
-     // $state.go('app.clublists')
+  //    $scope.me = currentUser;
+  //    // $state.go('app.clublists')
 
-     if(currentUser === null){
-      $state.go('intro')
-     }
-   });
-
-
+  //    if(currentUser === null){
+  //     $state.go('intro')
+  //    }
+  //  });
 
 
-    // Create the login modal that we will use later
+
+
+   
     $ionicModal.fromTemplateUrl('templates/login.html', {
       scope: $scope
     }).then(function(modal) {
       $scope.loginModal = modal;
     });
 
-    // Create the login modal that we will use later
+    
     $ionicModal.fromTemplateUrl('templates/create.html', {
       scope: $scope
     }).then(function(modal) {
       $scope.createModal = modal;
     });
+
 
     // Triggered in the login modal to close it
     $scope.closeLogin = function() {
@@ -54,20 +50,15 @@ angular.module('main', [])
     };
 
     $scope.logout = function(){
-
+      $state.go('intro')
       ref.unauth()
-        $state.go('intro')
       
     }
 
-
-
-    // Triggered in the login modal to close it
     $scope.closeCreateClubModal = function() {
       $scope.createModal.hide();
     };
 
-    // Open the login modal
     $scope.openCreateClubModal = function() {
       $scope.createModal.show();
     };
@@ -78,12 +69,12 @@ angular.module('main', [])
     }
 
 
-    ref.onAuth(function(user) {
-      if (user) {
+    ref.onAuth(function(currentUser) {
+      if (currentUser) {
         // user authenticated with Firebase
-        $scope.user = user;
+        $scope.currentUser = currentUser;
 
-        console.log("User ID: " + user.uid + ", Provider: " + user.provider);
+        console.log("User ID: " + currentUser.uid + ", Provider: " + currentUser.provider);
       } else {
         // user is logged out
 
@@ -123,14 +114,17 @@ angular.module('main', [])
               email: $scope.loginData.username,
               password: $scope.loginData.password
 
-      }, function(error, user) {
+      }, function(error, currentUser) {
 
       if(error === null){
-        $scope.user = user;
+
+        $scope.currentUser = currentUser;
+        
+
         if($scope.imageData !== null){
           //if someone change profile picture or add new one from longin page
 
-            ref.child('users/' + user.uid).update({
+            ref.child('users/' + currentUser.uid).update({
             avatar: $scope.imageData
              });
         }
@@ -140,8 +134,10 @@ angular.module('main', [])
         $scope.loginModal.hide();
 
       }else {
+
         console.log(error.message)
-        $scope.errorMessage = error.message;
+        $scope.error = error.message;
+        $scope.$apply();
     
       }
 
@@ -150,12 +146,21 @@ angular.module('main', [])
     }
 
       // Perform the login action when the user submits the login form
-      $scope.doSignup = function() {
+$scope.doSignup = function() {
+
+          //check password confirmation
+
+            if($scope.loginData.passwordConfirmation !== $scope.loginData.password){
+
+              $scope.error = "Password confirmation does not match";
+              $scope.$apply();
+              return;
+            }
+
 
         // // console.log($scope.user);
         // // Create user 
          ref.createUser({email: $scope.loginData.username, password: $scope.loginData.password}, function(error){
-
 
              if(error === null){
 
@@ -163,17 +168,19 @@ angular.module('main', [])
                   email: $scope.loginData.username,
                   password: $scope.loginData.password
 
-                }, function(loginError, user) {
+                }, function(loginError, currentUser) {
 
                  if(loginError === null){
                     
+                    $scope.currentUser = currentUser;
+
                    $scope.imageData = $scope.imageData ||  $scope.defaultImage;
-                    ref.child('users').child(user.uid).setWithPriority({
-                      displayName: user.password.email, /* this may not work with other providers than "password" provider */
-                      provider: user.provider,
-                      provider_id: user.uid,
+                    ref.child('users').child(currentUser.uid).setWithPriority({
+                      displayName: currentUser.password.email, /* this may not work with other providers than "password" provider */
+                      provider: currentUser.provider,
+                      provider_id: currentUser.uid,
                       avatar: $scope.imageData
-                    }, user.password.email);
+                    }, currentUser.password.email);
 
                   $state.go('app.clublists')
                   $scope.loginModal.hide();
@@ -184,7 +191,8 @@ angular.module('main', [])
                   else 
                   {
                     console.log(loginError.message)
-                    $scope.errorMessage = error.message;
+                    $scope.error = loginError.message;
+                    $scope.$apply();
                     }
               
                 })
@@ -193,49 +201,14 @@ angular.module('main', [])
 
             else{
 
-              $scope.errorMessage = error;
-              console.log(error)
+              $scope.error = error.message;
+              console.log(error.message)
+              $scope.$apply();
            }
 
               });
+
     }
-
-
-
-          // if(error === null){
-
-
-
-          //  $scope.imageData = $scope.imageData ||  $scope.defaultImage;
-          //   ref.child('users').child(user.uid).setWithPriority({
-          //     displayName: user.password.email, /* this may not work with other providers than "password" provider */
-          //     provider: user.provider,
-          //     provider_id: user.uid,
-          //     avatar: $scope.imageData
-          //   }, user.password.email);
-
-          //   // // login in the created user
-          //   //   ref.authWithPassword({email: $scope.loginData.username, password: $scope.loginData.password},
-          //   //     function(user) {
-          //   //     $scope.user = user;
-          //   //     $state.go('app.clublists')
-          //   //     $scope.loginModal.hide();
-          //   //     $scope.imageData = "" //clean image holder
-
-          //   //   }, function(error) {
-          //   //     //console.error("Login failed: ", error);
-          //   //   });
-
-
-          //     // login the created user
-          //     $scope.doLogin();
-
-
-          // }
-
-
-    
-
 
     //Cleanup the modal when we're done with it!
   $scope.$on('$destroy', function() {

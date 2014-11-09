@@ -4,7 +4,7 @@
 <div class="list" >
  <!--  {{messagebox}} -->
     <a class="item item-avatar" ng-repeat="message in messagebox" ng-click="toPerson(message.provider_id)">
-      <img src="img/ionic.png">
+      <img ng-src="data:image/jpeg;base64,{{message.avatar}}" >
       <h2>{{message.displayName}}</h2>
       <p>unread</p>
     </a>
@@ -16,3 +16,4 @@
 hello -->
 </ion-content>
 </ion-view>
+
