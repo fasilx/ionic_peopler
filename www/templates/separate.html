@@ -1,6 +1,6 @@
 
 <ion-view ng-class="{'separate-members-only bar-title': membersOnly}" 
-	class="separate bar-title" title="{{separateBar.email | shaveEmail}}[{{separateBar.position}}S]"  ng-controller="SeparateCtrl">
+	class="separate bar-title" title="{{separateBar}}"  ng-controller="SeparateCtrl">
 
 <ion-nav-buttons side="right">
 <a ng-show="rightToAdd" style="font-size:150%; padding-right:5px;" class="tab tabs-icon-only" ng-click="openModal()">
@@ -102,6 +102,7 @@
 			<i class="icon ion-camera theme"></i>
 		</div>
 		<div id="messageBox" class="col col-75">
+			<i ng-if="loading" class="theme ion-loading-d"></i>
 			<img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
 				 alt="image message NOT shown" height="80" width="80"><br>
 			<textarea autofocus ng-class="{'message-box-image': imageData === null}"

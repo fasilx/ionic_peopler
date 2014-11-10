@@ -27,9 +27,10 @@ $timeout(function() {
   var currentUser = $scope.currentUser;
     $scope.$apply(function(){
       messageboxSrvc.messagebox(currentUser.uid, $stateParams.clublistId).then(function(messagebox){
+
         $scope.messagebox = messagebox;
-        $scope.messageboxCount = messagebox.length
-         console.log(messagebox)       
+        $scope.messageboxCount = Object.keys(messagebox).length
+
     })
 })
   
@@ -93,7 +94,7 @@ $timeout(function() {
           // 177,178 
         }
 
-        console.log(person)
+        //console.log(person)
       var messagePersonRef = new Firebase($scope.URL + "/messages/" +
                                           $stateParams.clublistId + "/person/" + refName)
 
@@ -113,33 +114,64 @@ $timeout(function() {
 
 
 
-$scope.toPeople = function(title, isGroup){
-    
+$scope.toPeople = function(title, isGroup, name){
+    // check if in scope or call onAuth. Saves time from checking in onAuth all the time.
     if($scope.currentUser){
       currentUser = $scope.currentUser
-      toPeopleMethod(title,isGroup)
+      toPeopleMethod(title,isGroup, name)
     }else{
       ref.onAuth(function(currentUser){
 
-        toPeopleMethod(title,isGroup)
+        toPeopleMethod(title,isGroup, name)
       })
     }
   }
 
-var toPeopleMethod = function(title, isGroup){
+var toPeopleMethod = function(title, isGroup, name){
 
       if(isGroup){
-        var position = "RANDOM GROUP"
+
+        if(title.length > 1) // if there is more than one person in this group
+        {
+
+          angular.forEach(title, function(val, key){
+
+            var array = []
+              //console.log(val)
+              clubRef.child('members/' + val + "/position")
+                     .once('value', function(snap){
+                      //console.log('lkajsdfkajkfjadsj')
+                      //console.log(snap.val())
+                      array = snap.val()
+                      array.push(name)
+                      //console.log(array);
+                      clubRef.child('members/' + val + "/position").set(array)
+                      
+
+                     });
+                     //(positions, function(){console.log("new array is set")}) 
+
+          } );
+      
+            clubRef.child('titles').once('value', function(snap){
+              var ttl = snap.val()
+                  ttl.push(name)  //get array from firebase and update it. there is no other way
+              clubRef.child('titles').set(ttl)
+            }) //add this title's name to this aray location  //add this titels name to this location
+        }
+
+
+        var position = name
         rule = title //rule now is array of users uid
         rule.push(currentUser.uid)
-        console.log("is grouop is true")
-        console.log(rule)
+        //console.log("is grouop is true")
+        //console.log(rule)
       }
       else
       {
 
             var rule = [];
-            var position = title;
+            var position = title[0];
             rule.push(currentUser.uid)
 
             //var positionRef = clubRef.child("members");
@@ -147,8 +179,8 @@ var toPeopleMethod = function(title, isGroup){
             clubRef.child('members').once( 'value', function(dataSnapshot) {  /* handle read data */ 
 
               angular.forEach(dataSnapshot.val(), function(value, key) {
-
-                if(value.position === title && key !== currentUser.uid){
+                //console.log(value.position)
+                if(value.position[0] === title[0] && key !== currentUser.uid){
                   rule.push(key);
                 }
               
@@ -208,15 +240,15 @@ $scope.takePicture = function(){
                $scope.$apply(function(){
                 $scope.recievedMessages = allMessages.val()
                 $scope.recievedMessagesLength = allMessages.numChildren()
-                console.log($scope.recievedMessagesLength)
+                //console.log($scope.recievedMessagesLength)
             })
             }); 
           
-            console.log($scope.recievedMessages)
+            //console.log($scope.recievedMessages)
           })
      
        //$ionicScrollDelegate.scrollTop();
-       console.log("scrolling top")
+       //console.log("scrolling top")
 
   }
   $scope.ignoreScrollBottom = false;  //set this to false if 'load more' button is not pressed
@@ -227,13 +259,13 @@ $scope.takePicture = function(){
            $scope.$apply(function(){
             $scope.recievedMessages = allMessages.val()
              $scope.recievedMessagesLength = allMessages.numChildren()
-             console.log($scope.recievedMessagesLength)
+             //console.log($scope.recievedMessagesLength)
         })
         }); 
       
        
       })
-    console.log($scope.recievedMessages)
+    //console.log($scope.recievedMessages)
  // end message recieved ===============================================
 
 
@@ -259,23 +291,23 @@ $scope.takePicture = function(){
 
 var sendMessageMethod = function(message,currentUser){
 
-console.log("message....message")
-console.log(message)
+
     var messageData = {message: message, image: $scope.imageData}
 
         // currentUser.id = currentUser.uid.split(":")[1]  //new firebase auth does not have id by default anymore. sucks
 
         var position = clubRef.child("members/" + currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
 
+          $scope.loading = true //.././././././././././././.
           messageAllRef.push({sender: currentUser, message: messageData,
            position: positionSnapshot.val(), createdAt: Firebase.ServerValue.TIMESTAMP}, function(res) {
-
+          $scope.loading = false //.././././././././././././.
             // var messageboxItem = {}
             // messageboxItem[currentUser.id] = false;
             // clubRef.child("memebers/" + person + "/messagebox").update(messageboxItem)
-            console.log(res)
+            //console.log(res)
             $cordovaDialogs.beep(1)
-            console.log('beep......')
+            //console.log('beep......')
             $scope.imageData = "" /* clean the scope from lingering around for next messages */
             //alert("before beep")
           
@@ -289,7 +321,13 @@ console.log(message)
 
   $scope.newMember = {}
   $scope.requestingMember = {}
-  $scope.titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP ONE', 'VP TWO', 'MEMBER', 'GUEST'];
+
+  clubRef.child('titles').once('value', function(titles){
+    //console.log(titles.val())
+     $scope.titles = titles.val();
+     //['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP ONE', 'VP TWO', 'MEMBER', 'GUEST']; 
+  })
+  // $scope.titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP ONE', 'VP TWO', 'MEMBER', 'GUEST'];
 
     ref.onAuth(function(currentUser){
      // currentUser.id = currentUser.uid.split(":")[1]
@@ -298,14 +336,14 @@ console.log(message)
        var clubRequestRef = clubRef.child("requests");
        var position = clubPostionRef.on('value', function (snap) {
          // body...
-        if(snap.val() === 'FOUNDER' || snap.val() === 'VP HR') {
+        if(snap.val().indexOf('FOUNDER') > -1 || snap.val().indexOf('VP HR') > -1) {
           clubRequestRef.on('value', function(result){
 
           $timeout(function() {
              $scope.$apply(function(){
              $scope.rightToAdd = true
              $scope.requestCount = result.numChildren();
-             console.log($scope.requestCount)
+             //console.log($scope.requestCount)
              $scope.requests = result.val();
           }) 
           });
@@ -337,21 +375,8 @@ console.log(message)
       var member_id =  Object.keys(snap.val())[0] 
 
       $scope.addRequestingMember(member_id, $scope.newMember.email,$scope.newMember.position)
-
-      // clubRef.child("members/" + member_id).set({position: $scope.newMember.position, 
-      //                                            email: $scope.newMember.email, messagebox: "init"},function(){
-      //   //add club member ship in user location
-      //   var userIdRef = new Firebase($scope.URL + "/users/" + member_id + "/clubs")
-      //   var clublistId = $stateParams.clublistId;
-
-      //      var obj = {};
-      //      obj[clublistId] = true;
-      //      userIdRef.update(obj) 
-
-      //   $scope.memberModal.hide()
-
-
-      // });
+     
+        $scope.memberModal.hide();
 
     });
 
@@ -359,39 +384,9 @@ console.log(message)
   }
 
 
-  // var addMemberMethod = function(id, position, email){
+  $scope.formGroup = function(users, name){
 
-
-  //        clubRef.child("members/" + id).set({position: position, email: email, messagebox: "init"},function(){
-  //       //add club membership in user location
-  //       var userIdRef = new Firebase($scope.URL + "/users/" + id + "/clubs")
-  //       var clublistId = $stateParams.clublistId;
-
-  //          var obj = {};
-  //          obj[clublistId] = true;
-  //          userIdRef.update(obj) 
-
-  //          $scope.$apply(function(){
-
-  //             $scope.requestAdded = true;
-  //          })
-
-  //          // remove user from request location
-  //           var clubRequestRef = clubRef.child("requests");
-
-  //           clubRequestRef.child(id).remove(function(){
-  //             $scope.$apply();
-  //             console.log("user removed from requests")
-  //           });
-
-  //     });
-
-  // }
-
-
-  $scope.formGroup = function(users){
-
-  console.log(users)
+  //console.log(users)
 
   var rule = []
   
@@ -405,8 +400,8 @@ console.log(message)
        
       
     });
-    console.log(rule)
-    if(rule){
+    //console.log(rule)
+    if(rule.length === 0){
 
       $scope.groupFormingError = "Please add at least one name"
     
@@ -415,7 +410,7 @@ console.log(message)
     }else{
 
        $scope.memberModal.hide()
-       $scope.toPeople(rule,true); //send true to toPeopele() so it can know this sent it.
+       $scope.toPeople(rule, true, name); //send true to toPeopele() so it can know this sent it.
        
     }
 
@@ -427,7 +422,7 @@ console.log(message)
 
   $scope.addRequestingMember = function(id,email,position){
 
-         clubRef.child("members/" + id).set({position: position, email: email, messagebox: "init"},function(){
+         clubRef.child("members/" + id).set({position: [position], email: email, messagebox: "init"},function(){
         //add club membership in user location
         var userIdRef = new Firebase($scope.URL + "/users/" + id + "/clubs")
         var clublistId = $stateParams.clublistId;
@@ -445,7 +440,7 @@ console.log(message)
             var clubRequestRef = clubRef.child("requests");
             clubRequestRef.child(id).remove(function(){
               $scope.$apply();
-              console.log("user removed from requests")
+              //console.log("user removed from requests")
             });
 
       });

@@ -9,13 +9,13 @@
 
 
 
-    <div class="button-bar" style="font-size:80%;">
+    <div class="button-bar" >
       <a class="button" ng-click="showRequests=true;showByEmail=false;showAllMembers=false">
-        <i  class="theme">requests</i></a>
+        <i style="font-size:80%;color:#009999">requests</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=true;showAllMembers=false">
-        <i  class="theme">add by email</i></a>
+        <i style="font-size:80%;color:#009999">add by email</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=false;showAllMembers=true">
-        <i  class="theme">random group</i></a>
+        <i style="font-size:80%;color:#009999">random group</i></a>
     </div>
 
     <br><br>
@@ -23,7 +23,7 @@
     <div ng-show="showRequests">
        
               <div class="bar bar-subheader">
-                <div class="title">Accept requests to join your club here</div>
+                <div class="title"></div>
               </div>
               <br>
 
@@ -34,6 +34,7 @@
             
               <form>
                     <div class="clist" >
+                      <i>Accept requests to join your club</i>
                       <div class="item" ng-repeat="(key, data) in requests">
                             <div class="row">
                                 <div class="col">
@@ -41,7 +42,7 @@
                                 </div>
 
                                 <div class="col">
-                                  <select ng-init="requestingMember.position = titles[8]" 
+                                  <select ng-init="position = titles[8]" 
                                           ng-model="requestingMember.position" ng-options="title for title in titles">
                                   </select>
                                 </div>
@@ -61,7 +62,7 @@
     <div ng-show="showByEmail">
 
       <div class="bar bar-subheader">
-        <div class="title">Add Members Email Here. Person you add must have Peopler's account</div>
+        <div class="title" ></div>
       </div>
       <br>
        <form name="myForm"> 
@@ -75,17 +76,18 @@
 
     
            <div class="list">
-              
+                  <i>Add Members Email Here. Person you add must have Peopler's account</i>
                   <label class="item item-input">
-                    <span class="input-label">Member's Email</span>
-                    <input type="email" name="email" ng-model="newMember.email" required>
+                    <!-- <span class="input-label">Member's Email</span> -->
+                    <input type="email" name="email" ng-model="newMember.email" placeholder="Member's Email" required>
                   </label>
 
                   <label class="item item-input">
-                      <span class="input-label">Assign A Title</span>
+                     <span class="input-label dim">Assign A Title   </span>
                       <select ng-init="newMember.position = titles[8]" ng-model="newMember.position" 
-                              ng-options="title for title in titles">
+                              ng-options="title for title in titles" >
                      </select>
+                      
                      <br>
                   </label>
 
@@ -102,7 +104,7 @@
 
     <div ng-show="showAllMembers">
         <div class="bar bar-subheader">
-        <div class="title">Form  a Group Messaging ... {{groupName}}</div>
+        <div class="title"></div>
       </div>
     
       <br>
@@ -112,6 +114,13 @@
                 </div>
               </div>
       <ul class="list">
+        Form  a new Group Messaging:   <i style="color:#009999">{{groupName}}</i><br>
+        
+          <div class="item item-input-inset">
+            <label class="item-input-wrapper">
+              <input type="text" ng-model="groupName" placeholder="Name This Group">
+            </label>
+          </div>
 
         <li class="item item-checkbox" ng-repeat="user in allUsers" ng-if="user.email"> 
            <label class="checkbox">
@@ -122,7 +131,7 @@
         </li>
       </ul>
           <label class="item" >
-          <button class="button button-block button-positive" ng-click="formGroup(allUsers)">Add Users</button>
+          <button class="button button-block button-positive" ng-click="formGroup(allUsers, groupName)">Add Users</button>
           </label>
     </div>
 

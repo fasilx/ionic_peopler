@@ -1,6 +1,6 @@
 angular.module('separate', [])
 .controller('SeparateCtrl', function($scope, $stateParams, $firebase, $ionicScrollDelegate,
- $firebaseSimpleLogin, $ionicModal, capturePictureSrvc, $state, $timeout, $cordovaDialogs) {
+ $firebaseSimpleLogin, $ionicModal, capturePictureSrvc, $state, $timeout, $cordovaDialogs, $filter) {
 
   var clubRef = new Firebase($scope.URL + "/clubs").child($stateParams.clublistId);
   var clubSync = $firebase(clubRef);
@@ -39,14 +39,14 @@ angular.module('separate', [])
        //name for the top bar
        clubRef.child("/members/" + $stateParams.rule).once('value', function(melse){
         console.log(melse.val())
-        $scope.separateBar = melse.val()
+        $scope.separateBar = melse.val().position[0] + " | " + $filter('shaveEmail')(melse.val().email)
       })
 
      }
      else
      {
       var messageRef = messageGroupRef;
-      $scope.separateBar = {position: $stateParams.position}
+      $scope.separateBar = $stateParams.position
     }
 
 
@@ -66,11 +66,11 @@ recievedMessagesMethod = function(){
           $timeout(function() {
            $scope.$apply(function(){
 
-            console.log(allMessages.val())
+            //console.log(allMessages.val())
             // $scope.recievedMessages = allMessages.val()
 
             $scope.recievedMessagesLength = allMessages.numChildren()
-            console.log($scope.recievedMessagesLength)
+            //console.log($scope.recievedMessagesLength)
           })
          }); 
         })
@@ -89,7 +89,7 @@ $scope.loadMore = function(){
 
         $scope.ignoreScrollBottom = true;
         //$ionicScrollDelegate.scrollTop();
-        console.log("scrolling top")
+        //console.log("scrolling top")
 
 }
 
@@ -137,14 +137,17 @@ var sendMessageMethod = function(message,currentUser){
               //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
         var ref = new Firebase($scope.URL);
 
+
         var position = clubRef.child("members/" + currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
         
         var messageData = {message: message, image: $scope.imageData}
 
-
+        $scope.loading = true //.././././././././././././.
         messageRef.push({sender: currentUser, message: messageData,
          position: positionSnapshot.val(),
          rule: false, createdAt: Firebase.ServerValue.TIMESTAMP}, function(ref){
+
+          $scope.loading = false //.././././././././././././.
 
            var messageboxItem = {}
            messageboxItem[$scope.currentUser.uid] = true;

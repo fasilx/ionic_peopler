@@ -4,10 +4,13 @@
 </ion-nav-buttons>
 <ion-content class="has-header" >
 
-<div ng-show="list.length === 0" ng-controller="CreateCtrl">
+<div ng-show="list.length === 0 && !loading" ng-controller="CreateCtrl">
 	<button class="button button-block" 
 	        ng-click="openCreateClubModal()">You don't have any clubs yet. create one now</button>
 </div>
+
+
+  <div ng-show="loading"><i style="font-size: 400%;"class="ion-loading-c"></i></div>
 
 <!--  {{list}} -->
 <div class="list">
@@ -15,7 +18,8 @@
   <a class="item item-avatar" ng-repeat="item in list"  ng-click="goToMessages(item.id, item.messageboxCount)">
     <img class="message-avatar" ng-src="data:image/jpeg;base64,{{item.avatar}}" 
     alt="img/ionic.png">
-    <h2>{{item.name}}</h2> 
+    <h2>{{item.name}} ({{item.memberCount}}<i ng-show="item.memberCount===1">member</i>
+                                           <i ng-show="item.memberCount > 1">members</i>)</h2> 
     <span>{{item.position}}</span>   <span ng-show="item.requestCount > 0" class="request-count">{{item.requestCount}} Requests</span>
     <p>{{item.description}} </p>  
     <i ng-show="item.messageboxCount > 0" class="badge badge-assertive">{{item.messageboxCount}}</i>      

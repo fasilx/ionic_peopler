@@ -1,6 +1,6 @@
 <div class="modal">
   <ion-header-bar>
-    <h3 class="title">Sign Up or Login</h3>
+    <h3 class="title">Welcome To Peopler</h3>
  
     <div class="buttons">
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
@@ -8,19 +8,19 @@
   </ion-header-bar>
   <ion-content ng-init="createUser=false">
 
-  <a ng-click="createUser=!createUser;" class="row responsive-sm">
-  <div class="col message" ng-hide="createUser"
-       style="text-align:center;color:#009999"><b class="ion-arrow-right-c"></b> Signup Here</div>
-  <div class="col message" ng-show="createUser" 
-        style="text-align:center;color:#FF9900"><b class="ion-arrow-right-c"></b> Login Here</div>
-  </a>
+  <div class="row responsive-sm">
+  <a ng-click="createUser=true;title('login')"  class="col message" ng-hide="createUser"
+       style="text-align:center;color:#009999"><b class="ion-arrow-right-c"></b> Signing UP? Click Here</a>
+  <a ng-click="createUser=false;title('signin')"  class="col message" ng-show="createUser" 
+        style="text-align:center;color:#FF9900"><b class="ion-arrow-right-c"></b> Logging IN? Click Here</a>
+  </div>
 
 
  
 
     
       <div class="list" >
-      
+       
         <form>
           <div ng-show="error" class="row responsive-sm">
           
@@ -29,6 +29,7 @@
           </div>
 
           <div ng-hide="createUser">
+             <label>Please log in below: </label>
            <label class="item item-input">
             <!-- <span class="input-label">Username</span> -->
             <input type="text" ng-model="loginData.username" 
@@ -42,6 +43,7 @@
         </div>
 
         <div ng-show="createUser">
+          <label>Please Sign up below: </label>
           <label class="item item-input">
             <!-- <span class="input-label">Username</span> -->
             <input type="text" ng-model="loginData.username" 

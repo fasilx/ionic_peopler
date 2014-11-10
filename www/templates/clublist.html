@@ -6,7 +6,7 @@
 	
 	<div  class="ion-ios7-email-outline" style="font-size:200%;">	
 	</div>
-	<div  ng-show="messagebox.length" class="message-badge">
+	<div  ng-show="messageboxCount > 0" class="message-badge">
 		{{messageboxCount}}
 	</div>
 </a>
@@ -46,15 +46,15 @@ ng-repeat="recievedMessage in recievedMessages" ng-init="scrollBottom()" >
 
 <div ng-class="{'message-me': recievedMessage.sender.uid === currentUser.uid,
 	'message': recievedMessage.sender.uid !== currentUser.uid}" >
-<div >
+
 	<img ng-if="!!recievedMessage.message.image" class="full-image"
 	ng-src="data:image/jpeg;base64,{{recievedMessage.message.image}}" 
-	alt="image message NOT shown" style="max-width:200px;min-width:200px">
+	alt="image message NOT shown" style="max-width:200px;min-width:200px" >
 	<br ng-if="!!recievedMessage.message.image">
-	{{recievedMessage.message.message}}
+	 {{recievedMessage.message.message}}
 
 
-</div>
+
 
 </div>	
 <div class="dim" 
@@ -67,13 +67,14 @@ ng-class="{'message-title-me': recievedMessage.sender.uid === currentUser.uid}" 
 	<a ng-hide="recievedMessage.sender.uid === currentUser.uid" class="message-title" ng-click="toPerson(recievedMessage.sender.uid)"> {{recievedMessage.sender.password.email | shaveEmail}}
 		<i class="ion-reply"></i>
 	</a>
-	<a ng-hide="recievedMessage.sender.uid === currentUser.uid" class="message-title" ng-click="toPeople(recievedMessage.position)">{{recievedMessage.position}}
+	<a ng-hide="recievedMessage.sender.uid === currentUser.uid" class="message-title" ng-click="toPeople(recievedMessage.position)">{{recievedMessage.position[0]}}
 		<i class="ion-reply-all"></i>
 	</a>
 	
 </div>
 
 </div>
+
 <br>
 
 
@@ -85,6 +86,7 @@ ng-class="{'message-title-me': recievedMessage.sender.uid === currentUser.uid}" 
 			<i class="icon ion-camera theme"></i>
 		</div>
 		<div id="messageBox" class="col col-75">
+			<i ng-if="loading" class="theme ion-loading-d"></i>
 			<img class="message-box"  ng-if='imageData' ng-src="data:image/jpeg;base64,{{imageData}}" 
 			alt="image message NOT shown" height="80" width="80"><br>
 			<textarea autofocus ng-class="{'message-box-image': imageData === null}"

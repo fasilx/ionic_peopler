@@ -19,19 +19,19 @@
 			</div>
 
 			<div ng-hide="checked" style="padding-left: 20%;">
-				<ul> (messages individuals)
-					<li ng-repeat="user in allUsers  | filter:email | limitTo:5">
+				
+					<div ng-repeat="user in allUsers  | filter:email">
 						<a href ng-click="toPerson(user.id)">{{user.email | shaveEmail}}</a>
-					</li>
-				</ul>
+					</div>
+				
 			</div>
 
 			<div ng-show="checked" style="padding-left: 20%;">
-				<ul> (messages all with this title)
-					<li ng-repeat="pos in allUsers  | unique:'position' | filter:title | limitTo:5">
-						<a href ng-click="toPeople(pos.position)">{{pos.position}}</a>
-					</li>
-				</ul>
+			
+					<div ng-repeat="pos in allUsers  | unique:'position' | filter:title ">
+						<a href ng-click="toPeople(pos.position)">{{pos.position}}(S)</a>
+					</div>
+				
 			</div>
 			<!-- {{allUsers}} -->
 			<hr>

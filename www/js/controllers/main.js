@@ -8,23 +8,7 @@ angular.module('main', [])
   $scope.URL = "https://peopler.firebaseio.com"
   $scope.defaultImage = defaultImage;
   var ref = new Firebase($scope.URL)
-
-  // ref.onAuth(function(currentUser){
-
-
-
-  //    $scope.me = currentUser;
-  //    // $state.go('app.clublists')
-
-  //    if(currentUser === null){
-  //     $state.go('intro')
-  //    }
-  //  });
-
-
-
-
-   
+ 
     $ionicModal.fromTemplateUrl('templates/login.html', {
       scope: $scope
     }).then(function(modal) {
@@ -74,7 +58,7 @@ angular.module('main', [])
         // user authenticated with Firebase
         $scope.currentUser = currentUser;
 
-        console.log("User ID: " + currentUser.uid + ", Provider: " + currentUser.provider);
+        //console.log("User ID: " + currentUser.uid + ", Provider: " + currentUser.provider);
       } else {
         // user is logged out
 

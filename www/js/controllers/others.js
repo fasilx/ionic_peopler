@@ -6,7 +6,7 @@ angular.module('others', [])
 
   var clubRef = new Firebase($scope.URL + "/clubs");
 
-  sync = $firebase(clubRef);
+  // sync = $firebase(clubRef);
   //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
   var ref = new Firebase($scope.URL);
 
@@ -28,7 +28,7 @@ angular.module('others', [])
 
 
  $scope.createClub = function(club){
-  console.log(club)
+  //console.log(club)
   // validation
   if (club.name === "" || club.description === "") {
     $scope.creationError = "Name and description of Club is required";
@@ -38,12 +38,15 @@ angular.module('others', [])
 
   ref.onAuth(function(currentUser){
       //currentUser.id = currentUser.uid.split(":")[1]
-
+      var titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP MARKETING', 'VP HR', 'VP PR', 'VP LAW', 'MEMBER', 'GUEST']; 
       $scope.imageData = $scope.imageData ||  $scope.defaultImage;
 
     //club.name and club.description, etc... are found from the $scope of the main.js, the global scope context
-    sync.$push({name: club.name, description: club.description, avatar: $scope.imageData, founders_id: currentUser.uid}).then(function(newChildRef) {
+     var newChildRef = clubRef.push({name: club.name, titles: titles, description: club.description, avatar: $scope.imageData, founders_id: currentUser.uid},
+            function(error) {
       //console.log("added record with id " + newChildRef.key());
+      if (error === null){
+
 
       var clublistId = newChildRef.key();
       var userId = currentUser.uid
@@ -51,10 +54,10 @@ angular.module('others', [])
       var memberRef = new Firebase($scope.URL + "/clubs/" + clublistId)
 
       memberRef.update({members: userId}, function(){
-       var memberPositionRef = new Firebase($scope.URL + "/clubs/" + clublistId + "/members/" + userId)
+       var clubMemberIdRef = new Firebase($scope.URL + "/clubs/" + clublistId + "/members/" + userId)
        var userIdRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
-       memberPositionRef.update({position: 'FOUNDER'})
+       clubMemberIdRef.update({position: ['FOUNDER'], email: currentUser.password.email, messagebox: "init"})
        messageRef.update({all: "init", group: "init", person: "init"})
 
        var obj = {};
@@ -69,6 +72,7 @@ angular.module('others', [])
 
         $state.go('app.single', {clublistId: newChildRef.key()})
       }) 
+    }
     });
 })
 }
@@ -85,7 +89,7 @@ angular.module('others', [])
           //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
           var ref = new Firebase($scope.URL);
 
-          $scope.list = [];
+         $scope.list = [];
           
           var clubRef = new Firebase($scope.URL + "/clubs")
 
@@ -99,14 +103,15 @@ angular.module('others', [])
             });
 
 
-
+         
           ref.onAuth(function(currentUser){
          // currentUser.id = currentUser.uid.split(":")[1]
 
-
+              $scope.loading = true;  //...../...../...../...../
                var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
-               userIdClubRef.on('value', function(res){
+
+               userIdClubRef.once('value', function(res){
                 //console.log(res.val())
                 res.forEach(function(childSnapshot){
 
@@ -114,34 +119,41 @@ angular.module('others', [])
 
                   clubRef.child(childSnapshot.key()).on('value', function(snap){
 
-                    console.log(snap.val())
-
-                    var item = []
+                    // console.log(snap.val())
+                      $scope.loading = false;  //...../...../...../...../
+                    
+                     var item = []
 
                      item.id = snap.key()
                      item.name = snap.val().name
                      item.description = snap.val().description
                      item.avatar = snap.val().avatar
 
-                     if(angular.isObject(snap.val().messagebox)){
-                        item.messageboxCount = Object.keys(snap.val().messagebox).length
+                     // Object.keys() can be called on non-object, so protect that by if...else
+                     if(angular.isObject(snap.val().members[currentUser.uid].messagebox)){
+                        item.messageboxCount = Object.keys(snap.val().members[currentUser.uid].messagebox).length
                       }else{
                         item.messageboxCount = 0
                       }
 
-                     item.position = snap.val().position;
+                     item.memberCount = Object.keys(snap.val().members).length;
+                     var position = snap.val().members[currentUser.uid].position
+                     item.position = position.toString()
 
-                     if ((item.position === 'FOUNDER' || item.position === 'VP HR') && angular.isDefined(snap.val().requests)){
+                     if ((position.indexOf('FOUNDER') > -1 || position.indexOf('VP HR') > -1 ) && angular.isDefined(snap.val().requests)){
                        item.requestCount = Object.keys(snap.val().requests).length;  
 
                      }
 
-                     $timeout(function(){
+                       // $scope.list.push(item); 
+                       // $scope.$apply()
+                       $timeout(function(){
                        $scope.$apply(function(){
-                         //$scope.list = [] //empyt this array first otherwise it addes to not replace the needed values 
-                         $scope.list.push(item)
+                        
+                         $scope.list.push(item);
+                         console.log($scope.list)
                        })
-                     })
+                      })
                     })
                   });
 

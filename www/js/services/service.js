@@ -10,8 +10,10 @@ angular.module('service', [])
 
    clubRef.child('members/' + currentUserId + '/messagebox').on('value', function(melse){
 
+    if( angular.isObject(melse.val()) ){
+
     angular.forEach(melse.val(), function(value, key) {
-      console.log(melse.val())
+      console.log(value)
       userRef.child(key).on('value',function(res){
         if (value) {
 
@@ -21,10 +23,11 @@ angular.module('service', [])
         };
         $rootScope.$broadcast('newMessage', messageboxMessage)    
         deferred.resolve(messageboxMessage);
-        console.log(messageboxMessage)
+        //console.log(messageboxMessage)
         
       })
     });
+  }
   })  
     //})
 
