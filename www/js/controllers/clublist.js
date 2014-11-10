@@ -22,6 +22,7 @@ angular.module('clublist', [])
 
 }
 
+
 // get messages as they come
 $timeout(function() {
   var currentUser = $scope.currentUser;
@@ -336,7 +337,7 @@ var sendMessageMethod = function(message,currentUser){
        var clubRequestRef = clubRef.child("requests");
        var position = clubPostionRef.on('value', function (snap) {
          // body...
-        if(snap.val().indexOf('FOUNDER') > -1 || snap.val().indexOf('VP HR') > -1) {
+        if((snap.val().indexOf('FOUNDER') > -1 || snap.val().indexOf('VP HR') > -1) && snap.val()) {
           clubRequestRef.on('value', function(result){
 
           $timeout(function() {

@@ -1,6 +1,6 @@
 angular.module('main', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, 
+.controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, $ionicNavBarDelegate,
                                 $state, $rootScope, capturePictureSrvc, defaultImage) {
   
 
@@ -8,7 +8,29 @@ angular.module('main', [])
   $scope.URL = "https://peopler.firebaseio.com"
   $scope.defaultImage = defaultImage;
   var ref = new Firebase($scope.URL)
- 
+
+
+  $scope.goBack = function() {
+    if($ionicNavBarDelegate.getTitle() === 'Unread Messages'){
+       
+        $state.go('app.clublists')
+
+    }else{
+      $ionicNavBarDelegate.back();
+    }
+    
+  };
+
+  $scope.getPreviousTitle = function() {
+    if($ionicNavBarDelegate.getTitle() === 'Unread Messages'){
+        return 'My Clubs'
+    }else{
+      return $ionicNavBarDelegate.getPreviousTitle();
+    } 
+      
+  };
+
+
     $ionicModal.fromTemplateUrl('templates/login.html', {
       scope: $scope
     }).then(function(modal) {
@@ -100,6 +122,8 @@ angular.module('main', [])
     //$scope.$apply();
     return;
   }
+
+
     //$event.preventDefault();
 
     ref.authWithPassword({
@@ -109,7 +133,7 @@ angular.module('main', [])
       }, function(error, currentUser) {
 
       if(error === null){
-        console.log(error)
+        
         $scope.currentUser = currentUser;
         
 

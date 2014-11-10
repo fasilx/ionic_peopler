@@ -2,7 +2,8 @@
 
   <ion-pane ion-side-menu-content>
     <ion-nav-bar style="border-color:#009999">
-      <ion-nav-back-button class="button-clear "><span class="icon ion-ios7-arrow-back">Back</span></ion-nav-back-button>
+      <ion-nav-back-button class="button-clear" ng-click="goBack()">
+          <span class="icon ion-ios7-arrow-back">{{getPreviousTitle() || 'Back'}}</span></ion-nav-back-button>
     </ion-nav-bar>
     <ion-nav-view name="menuContent" animation="slide-right-left"></ion-nav-view>
   </ion-pane>

@@ -81,7 +81,7 @@ angular.module('others', [])
 })
 
 
-.controller('ClublistsCtrl', function($scope, $firebaseSimpleLogin, $state, $timeout) {
+.controller('ClublistsCtrl', function($scope, $firebaseSimpleLogin, $state, $timeout, $ionicNavBarDelegate) {
 
 
           // $state.reload(); // this will help relaod the controller after login. I hope.
@@ -92,6 +92,8 @@ angular.module('others', [])
          $scope.list = [];
           
           var clubRef = new Firebase($scope.URL + "/clubs")
+
+          
 
 
           ref.onAuth(function(currentUser){
@@ -110,20 +112,24 @@ angular.module('others', [])
               $scope.loading = true;  //...../...../...../...../
                var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
-
+               
                userIdClubRef.once('value', function(res){
-                //console.log(res.val())
-                res.forEach(function(childSnapshot){
 
+                 $ionicNavBarDelegate.showBackButton(false) //Hide back button here. It does not go anywhere.
+                 var clubkeys = Object.keys(res.val())
+                
+                angular.forEach(clubkeys, function(key, val){
+                  //alert("adding.....")
                   //console.log(childSnapshot.key())
 
-                  clubRef.child(childSnapshot.key()).on('value', function(snap){
+                  clubRef.child(key).once('value', function(snap){
 
-                    // console.log(snap.val())
+
+                     console.log(snap.val())
                       $scope.loading = false;  //...../...../...../...../
                     
+                    
                      var item = []
-
                      item.id = snap.key()
                      item.name = snap.val().name
                      item.description = snap.val().description
@@ -145,19 +151,30 @@ angular.module('others', [])
 
                      }
 
-                       // $scope.list.push(item); 
-                       // $scope.$apply()
-                       $timeout(function(){
-                       $scope.$apply(function(){
-                        
+                      $scope.$apply(function(){
                          $scope.list.push(item);
+
                          console.log($scope.list)
-                       })
+  
                       })
+                  
+                       // $scope.$apply()
+               
                     })
+
+
                   });
 
                   });
+
+                  // $timeout(function(){
+                  //      $scope.$apply(function(){
+                        
+                  //        $scope.list.push(item);
+                  //        console.log($scope.list)
+
+                  //      })
+                  //     })
 
                 })
 

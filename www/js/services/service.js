@@ -18,12 +18,12 @@ angular.module('service', [])
         if (value) {
 
           messageboxMessage.push(res.val());
-          console.log(res.val())
+          //console.log(messageboxMessage)
 
         };
         $rootScope.$broadcast('newMessage', messageboxMessage)    
         deferred.resolve(messageboxMessage);
-        //console.log(messageboxMessage)
+        console.log(messageboxMessage)
         
       })
     });
