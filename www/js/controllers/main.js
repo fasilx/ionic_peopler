@@ -1,6 +1,6 @@
 angular.module('main', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, $ionicNavBarDelegate,
+.controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, $ionicNavBarDelegate, $filter,
                                 $state, $rootScope, capturePictureSrvc, defaultImage) {
   
 
@@ -15,18 +15,25 @@ angular.module('main', [])
        
         $state.go('app.clublists')
 
-    }else{
+    }
+    else{
       $ionicNavBarDelegate.back();
     }
     
   };
 
   $scope.getPreviousTitle = function() {
+
     if($ionicNavBarDelegate.getTitle() === 'Unread Messages'){
         return 'My Clubs'
-    }else{
-      return $ionicNavBarDelegate.getPreviousTitle();
+    }
+    else if($ionicNavBarDelegate.getTitle() === 'My Clubs'){
+        return 'msgs';
+    }
+    else{
+      return $filter('limitTo')($ionicNavBarDelegate.getPreviousTitle(), 6)
     } 
+   
       
   };
 
@@ -118,7 +125,7 @@ angular.module('main', [])
 
   // more validation
   if ($scope.loginData.username === "" || $scope.loginData.password === "") {
-    $scope.error = "email or password is required";
+    $scope.loginError = "email or password is required";
     //$scope.$apply();
     return;
   }
@@ -147,12 +154,13 @@ angular.module('main', [])
 
 
         $state.go('app.clublists')
+        $scope.loginData = {};
         $scope.loginModal.hide();
 
       }else {
 
         console.log(error.message)
-        $scope.error = error.message;
+        $scope.loginError = error.message;
         $scope.$apply();
     
       }
@@ -167,14 +175,14 @@ $scope.doSignup = function() {
           //check password confirmation
             if($scope.loginData.passwordConfirmation !== $scope.loginData.password){
 
-              $scope.error = "Password confirmation does not match";
+              $scope.signupError = "Password confirmation does not match";
               $scope.$apply();
               return;
             }
 
                   // more validation
             if ($scope.loginData.username === "" || $scope.loginData.password === "" || $scope.loginData.passwordConfirmation === "") {
-              $scope.error = "email or password and confirmation is required";
+              $scope.signupError = "email or password and confirmation is required";
               //$scope.$apply();
               return;
             }
@@ -203,7 +211,7 @@ $scope.doSignup = function() {
                       provider_id: currentUser.uid,
                       avatar: $scope.imageData
                     }, currentUser.password.email);
-
+                  $scope.loginData = {};
                   $state.go('app.clublists')
                   $scope.loginModal.hide();
 
@@ -213,7 +221,7 @@ $scope.doSignup = function() {
                   else 
                   {
                     console.log(loginError.message)
-                    $scope.error = loginError.message;
+                    $scope.signupError = loginError.message;
                     $scope.$apply();
                     }
               
@@ -223,7 +231,7 @@ $scope.doSignup = function() {
 
             else{
 
-              $scope.error = error.message;
+              $scope.signupError = error.message;
               console.log(error.message)
               $scope.$apply();
            }

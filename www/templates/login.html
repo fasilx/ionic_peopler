@@ -22,13 +22,15 @@
       <div class="list" >
        
         <form>
-          <div ng-show="error" class="row responsive-sm">
-          
-            <div class="col error message" style="text-align:center">{{error}}</div>
-
-          </div>
+        
 
           <div ng-hide="createUser" >
+
+          <div ng-show="loginError" class="row responsive-sm">
+          
+            <div class="col error message" style="text-align:center">{{loginError}}</div>
+
+          </div>
             
            <label class="item item-input" style="border-color:#009999">
             <!-- <span class="input-label">Username</span> -->
@@ -40,9 +42,15 @@
             <input type="password" ng-model="loginData.password" 
             placeholder="password" ui-keypress="{enter:'doLogin($event)'}">
           </label>
+      
         </div>
 
         <div ng-show="createUser">
+           <div ng-show="signupError" class="row responsive-sm">
+          
+            <div class="col error message" style="text-align:center">{{signupError}}</div>
+
+          </div>
          
           <label class="item item-input" style="border-color:#FF9900">
             <!-- <span class="input-label">Username</span> -->
@@ -80,7 +88,7 @@
         
          <label class="item" ng-show="createUser" style="border-color:#FF9900">
               <!-- <button ng-hide="createUser" class="button button-block button-positive" ng-click="doLogin()">Log In</button> -->
-          <button  style="background-color:#FF9900;color:white;" class="button button-block" ng-click="doSignup()">Sign Up</button>
+          <button  style="background-color:#FF9900;color:white;" class="button button-block" ng-click="doSignup();">Sign Up</button>
         </label>
 </form>
     

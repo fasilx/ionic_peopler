@@ -13,9 +13,9 @@
       <a class="button" ng-click="showRequests=true;showByEmail=false;showAllMembers=false">
         <i style="font-size:80%;color:#009999">requests</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=true;showAllMembers=false">
-        <i style="font-size:80%;color:#FF9900">add by email</i></a>
+        <i style="font-size:80%;color:#FF9900">via email</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=false;showAllMembers=true">
-        <i style="font-size:80%;color:#8585FF">random group</i></a>
+        <i style="font-size:80%;color:#8585FF">new group</i></a>
     </div>
 
     <br><br>
@@ -36,6 +36,7 @@
                     <div class="clist" >
                 
                       <div class="item" ng-repeat="(key, data) in requests" style="border-color:#009999;">
+
                             <div class="row">
                                 <div class="col">
                                   {{data}}
@@ -95,7 +96,7 @@
                 <label class="item" style="border-color:#FF9900" >
                   <button ng-disabled ="myForm.email.$dirty && myForm.email.$invalid" 
                           class="button button-block " style="background-color:#FF9900; color:white"
-                          ng-click="addMember('fromForm')">Add
+                          ng-click="addMember('fromForm')">message now
                   </button>
                 </label> 
           </div> 
@@ -121,7 +122,7 @@
         
           <div class="item item-input-inset">
             <label class="item-input-wrapper">
-              <input type="text" ng-model="groupName" placeholder="Name This Group">
+              <input type="text" ng-model="groupName" placeholder="chose names below and name it here">
             </label>
           </div>
 

@@ -81,10 +81,8 @@ angular.module('others', [])
 })
 
 
-.controller('ClublistsCtrl', function($scope, $firebaseSimpleLogin, $state, $timeout, $ionicNavBarDelegate) {
+.controller('ClublistsCtrl', function($scope, $firebaseSimpleLogin, $state, $timeout) {
 
-
-          // $state.reload(); // this will help relaod the controller after login. I hope.
 
           //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
           var ref = new Firebase($scope.URL);
@@ -112,11 +110,17 @@ angular.module('others', [])
               $scope.loading = true;  //...../...../...../...../
                var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
-               
-               userIdClubRef.once('value', function(res){
+             
+               userIdClubRef.on('value', function(res){
 
-                 $ionicNavBarDelegate.showBackButton(false) //Hide back button here. It does not go anywhere.
-                 var clubkeys = Object.keys(res.val())
+                 if(res.val()){
+                  var clubkeys = Object.keys(res.val())
+                 // console.log(clubkeys.length)
+                   
+                 }else {
+                   $scope.loading = false;  //...../...../...../...../
+                 }
+                 
                 
                 angular.forEach(clubkeys, function(key, val){
                   //alert("adding.....")
@@ -125,7 +129,7 @@ angular.module('others', [])
                   clubRef.child(key).once('value', function(snap){
 
 
-                     console.log(snap.val())
+                      //console.log(snap.val())
                       $scope.loading = false;  //...../...../...../...../
                     
                     
@@ -154,7 +158,7 @@ angular.module('others', [])
                       $scope.$apply(function(){
                          $scope.list.push(item);
 
-                         console.log($scope.list)
+                         //console.log($scope.list)
   
                       })
                   
