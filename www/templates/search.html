@@ -11,16 +11,16 @@
 	  </label>
 	</div>
 <!-- {{clubs}} -->
-<div class="list">
+<div class="list" >
 
-    <div class="item item-avatar" ng-repeat="club in clubs | filter:query | limitTo:10 " >
+    <div class="item item-avatar" ng-repeat="club in clubs | filter:query" style="border-color:#8585FF">
       <img class="message-avatar" ng-src="data:image/jpeg;base64,{{club.avatar}}" 
          alt="img/ionic.png">
-      <h2>{{club.name}} </h2> 
-      <div class="message"><ng-pluralize count="club.memberCount" 
+      <h3>{{club.name}}
+      (<span style="font-size:80%"><ng-pluralize count="club.memberCount" 
       						 when="{'1': '1 member', 'other': '{} members'}">
       					  </ng-pluralize>
-       </div>
+      </span>)</h3>
   	  
       <p>{{club.description}}      
       		<i><a class="dim" style="color:#8585FF;float:right" ng-hide="sending || club.pendding" ng-click="joinRequest(club.id); sending = true">
@@ -33,8 +33,6 @@
       </p>
 
     </div>
-
-
 </div>
 
   </ion-content>

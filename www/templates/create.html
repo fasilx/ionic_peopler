@@ -9,7 +9,7 @@
 
 
 <div class="list">
-
+<br><br>
 	  <div ng-show="creationError" class="row responsive-sm">
           
             <div class="col error message" style="text-align:center">{{creationError}}</div>
@@ -17,11 +17,11 @@
        </div>
 
 
-	<label class="item item-input">
+	<label class="item item-input" style="border-color:#009999">
 		<!-- <span class="input-label">Club Name</span> -->
 		<input name="name" ng-model="club.name" type="text" placeholder="Club Name">
 	</label>
-	<label class="item item-input">
+	<label class="item item-input" style="border-color:#009999">
 		<!-- <span class="input-label">Small Description</span> -->
 		<input name="description" ng-model="club.description" type="text" placeholder="Small Description">
 	</label>
@@ -31,10 +31,17 @@
 		alt="image message NOT shown" height="80" width="80"><br>
 	</div>
 	<div class="col button button-clear " ng-click="takePicture()">
-		<i class="icon ion-camera theme"></i> Add Profile Picture
+		<i class="icon ion-camera theme"></i> Add club profile picture
 	</div>
+
+	<label class="item" style="border-color:#009999">	
+		<button class="button button-block" style="background-color:#009999;color:white" 
+		  		ng-click="createClub(club);" > Create New Club 
+	</button>
+    </label>
+
 </div>
-<button class="button button-block button-positive" ng-click="createClub(club);" > Create New Club </button>
+
 
 
 

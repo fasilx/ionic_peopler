@@ -13,9 +13,9 @@
       <a class="button" ng-click="showRequests=true;showByEmail=false;showAllMembers=false">
         <i style="font-size:80%;color:#009999">requests</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=true;showAllMembers=false">
-        <i style="font-size:80%;color:#009999">add by email</i></a>
+        <i style="font-size:80%;color:#FF9900">add by email</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=false;showAllMembers=true">
-        <i style="font-size:80%;color:#009999">random group</i></a>
+        <i style="font-size:80%;color:#8585FF">random group</i></a>
     </div>
 
     <br><br>
@@ -28,14 +28,14 @@
               <br>
 
               <div  class="row responsive-sm"> 
-                <div class="message col" style="text-align:center" ng-show="requests === null"> There are no requests at this point
+                <div class="message col" style="text-align:center" ng-show="requests === null"> There are no requests at this    point
                 </div>
               </div>
             
               <form>
                     <div class="clist" >
-                      <i>Accept requests to join your club</i>
-                      <div class="item" ng-repeat="(key, data) in requests">
+                
+                      <div class="item" ng-repeat="(key, data) in requests" style="border-color:#009999;">
                             <div class="row">
                                 <div class="col">
                                   {{data}}
@@ -47,10 +47,11 @@
                                   </select>
                                 </div>
                                 <div class="col">
-                                 <button ng-hide="requestAdded" class="button button-small button-positive" 
-                                          ng-click="addRequestingMember(key,data,requestingMember.position)">
+                                 <a ng-hide="requestAdded" class="message" 
+                                          ng-click="addRequestingMember(key,data,requestingMember.position)"
+                                           style="background-color:#009999;color:white;">
                                           Accept
-                                  </button>
+                                  </a>
                                 </div>
                             </div><!-- row  -->
                       </div>
@@ -76,14 +77,14 @@
 
     
            <div class="list">
-                  <i>Add Members Email Here. Person you add must have Peopler's account</i>
-                  <label class="item item-input">
+                  <!-- <i>Add New Members</i> -->
+                  <label class="item item-input" style="border-color:#FF9900">
                     <!-- <span class="input-label">Member's Email</span> -->
                     <input type="email" name="email" ng-model="newMember.email" placeholder="Member's Email" required>
                   </label>
 
-                  <label class="item item-input">
-                     <span class="input-label dim">Assign A Title   </span>
+                  <label class="item item-input" style="border-color:#FF9900">
+                     <span class="input-label dim">Assign a title   </span>
                       <select ng-init="newMember.position = titles[8]" ng-model="newMember.position" 
                               ng-options="title for title in titles" >
                      </select>
@@ -91,8 +92,9 @@
                      <br>
                   </label>
 
-                <label class="item" >
-                  <button ng-disabled ="myForm.email.$dirty && myForm.email.$invalid" class="button button-block button-positive" 
+                <label class="item" style="border-color:#FF9900" >
+                  <button ng-disabled ="myForm.email.$dirty && myForm.email.$invalid" 
+                          class="button button-block " style="background-color:#FF9900; color:white"
                           ng-click="addMember('fromForm')">Add
                   </button>
                 </label> 
@@ -114,7 +116,8 @@
                 </div>
               </div>
       <ul class="list">
-        Form  a new Group Messaging:   <i style="color:#009999">{{groupName}}</i><br>
+
+       <i style="color:#8585FF; padding-left: 20px;">{{groupName}}</i><br>
         
           <div class="item item-input-inset">
             <label class="item-input-wrapper">
@@ -131,7 +134,7 @@
         </li>
       </ul>
           <label class="item" >
-          <button class="button button-block button-positive" ng-click="formGroup(allUsers, groupName)">Add Users</button>
+          <button class="button button-block" style="background-color:#8585FF; color:white" ng-click="formGroup(allUsers, groupName)">Create group</button>
           </label>
     </div>
 

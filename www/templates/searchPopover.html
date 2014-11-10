@@ -18,20 +18,20 @@
 				</label>
 			</div>
 
-			<div ng-hide="checked" style="padding-left: 20%;">
+			<div ng-hide="checked" >
 				
-					<div ng-repeat="user in allUsers  | filter:email">
+					<div ng-repeat="user in allUsers  | filter:email" style="padding-left: 20px;">
 						<a href ng-click="toPerson(user.id)">{{user.email | shaveEmail}}</a>
 					</div>
-				
+					<hr>
 			</div>
 
-			<div ng-show="checked" style="padding-left: 20%;">
+			<div ng-show="checked" >
 			
-					<div ng-repeat="pos in allUsers  | unique:'position' | filter:title ">
-						<a href ng-click="toPeople(pos.position)">{{pos.position}}(S)</a>
+					<div ng-repeat="pos in allUsers  | unique:'position'" style="padding-left: 20px;">
+						<a href ng-click="toPeople(pos.position)">{{pos.position[0]}}</a>
 					</div>
-				
+					<hr>
 			</div>
 			<!-- {{allUsers}} -->
 			<hr>

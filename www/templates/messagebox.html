@@ -3,13 +3,13 @@
 <ion-content class="has-header" ng-controller="ClublistCtrl" >
 <div class="list" >
  <!--  {{messagebox}} -->
-    <a class="item item-avatar" ng-repeat="message in messagebox" ng-click="toPerson(message.provider_id)">
+    <a class="item item-avatar" ng-repeat="message in messagebox" 
+       ng-click="toPerson(message.provider_id)" style="border-color:#8585FF;">
       <img ng-src="data:image/jpeg;base64,{{message.avatar}}" >
       <h2>{{message.displayName}}</h2>
       <p>unread</p>
     </a>
 
-  
 
 </div>
 <!-- {{messagebox}}

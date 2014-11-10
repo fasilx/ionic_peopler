@@ -15,14 +15,18 @@
 <!--  {{list}} -->
 <div class="list">
 
-  <a class="item item-avatar" ng-repeat="item in list"  ng-click="goToMessages(item.id, item.messageboxCount)">
+  <a class="item item-avatar" style="border-color:#8585FF" ng-repeat="item in list"  
+     ng-click="goToMessages(item.id, item.messageboxCount)">
     <img class="message-avatar" ng-src="data:image/jpeg;base64,{{item.avatar}}" 
     alt="img/ionic.png">
-    <h2>{{item.name}} ({{item.memberCount}}<i ng-show="item.memberCount===1">member</i>
-                                           <i ng-show="item.memberCount > 1">members</i>)</h2> 
-    <span>{{item.position}}</span>   <span ng-show="item.requestCount > 0" class="request-count">{{item.requestCount}} Requests</span>
-    <p>{{item.description}} </p>  
-    <i ng-show="item.messageboxCount > 0" class="badge badge-assertive">{{item.messageboxCount}}</i>      
+    <h3>{{item.name}} ({{item.memberCount}}<i ng-show="item.memberCount===1">member</i>
+                                           <i ng-show="item.memberCount > 1">members</i>)</h3> 
+
+        <h4>{{item.position}}</h4>   
+        <i><h4 ng-show="item.requestCount > 0" 
+          class="request-count">{{item.requestCount}} Requests</h4></i>
+        <p>{{item.description}} </p>  
+    <h5 ng-show="item.messageboxCount > 0" class="badge badge-assertive">{{item.messageboxCount}}</h5>      
   </a>
 
 </div>
