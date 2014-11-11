@@ -18,7 +18,7 @@
         <i style="font-size:80%;color:#8585FF">new group</i></a>
     </div>
 
-    <br><br>
+    
 
     <div ng-show="showRequests">
        
@@ -47,14 +47,15 @@
                                           ng-model="requestingMember.position" ng-options="title for title in titles">
                                   </select>
                                 </div>
-                                <div class="col">
+                               </div><!-- row  -->
+                                <div>
                                  <a ng-hide="requestAdded" class="message" 
                                           ng-click="addRequestingMember(key,data,requestingMember.position)"
                                            style="background-color:#009999;color:white;">
                                           Accept
                                   </a>
                                 </div>
-                            </div><!-- row  -->
+                           
                       </div>
                     </div>
                </form>
@@ -66,7 +67,7 @@
       <div class="bar bar-subheader">
         <div class="title" ></div>
       </div>
-      <br>
+     
        <form name="myForm"> 
 
                   <div class="error" ng-show="form.email.$dirty && form.email.$error.required">
@@ -110,7 +111,7 @@
         <div class="title"></div>
       </div>
     
-      <br>
+  
               <div  ng-if="groupFormingError" class="row responsive-sm"> 
                 <div class="error message col" style="text-align:center" ng-show="requests === null">
                   {{groupFormingError}}
@@ -122,7 +123,7 @@
         
           <div class="item item-input-inset">
             <label class="item-input-wrapper">
-              <input type="text" ng-model="groupName" placeholder="chose names below and name it here">
+              <input type="text" ng-model="groupName" placeholder="choose names below and name it here">
             </label>
           </div>
 

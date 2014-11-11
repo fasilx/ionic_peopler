@@ -17,8 +17,8 @@
         <ion-item ng-hide="currentUser" nav-clear menu-close ng-click="login()" style="border-color:#FF9900">
           Login
         </ion-item >
-        <ion-item ng-show="currentUser" nav-clear menu-close ng-click="logout()" style="border-color:#FF9900">
-          Logout
+         <ion-item nav-clear menu-close href="#/app/clublists" style="border-color:#FF9900">
+          My Clubs
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/search" style="border-color:#FF9900">
           Join A Club
@@ -26,8 +26,8 @@
         <ion-item nav-clear menu-close ng-click="openCreateClubModal()" style="border-color:#FF9900">
           Create New Club
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/clublists" style="border-color:#FF9900">
-          My Clubs
+        <ion-item ng-show="currentUser" nav-clear menu-close ng-click="logout()" style="border-color:#FF9900">
+          Logout
         </ion-item>
       </ion-list>
     </ion-content>
