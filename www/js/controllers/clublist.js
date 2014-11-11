@@ -5,81 +5,104 @@ angular.module('clublist', [])
                                       $timeout, $ionicPopover,  $cordovaDialogs, capturePictureSrvc, messageboxSrvc) {
 
  var clubRef = new Firebase($scope.URL + "/clubs/" + $stateParams.clublistId);
- // var clubSync = $firebase(clubRef);
  var userRef = new Firebase($scope.URL + "/users")
  var messageAllRef = new Firebase($scope.URL + "/messages/" + $stateParams.clublistId + "/all")
- //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
  var ref = new Firebase("https://peopler.firebaseio.com");
  
 
+  $scope.newMember = {}
+  $scope.requestingMember = {}
 
 
- $scope.scrollBottom = function(){
-  if(!$scope.ignoreScrollBottom){
-   $ionicScrollDelegate.scrollBottom();
- }
+
+   $scope.scrollBottom = function(){
+    if(!$scope.ignoreScrollBottom){
+     $ionicScrollDelegate.scrollBottom();
+   }
+  }
 
 
-}
+   clubRef.once('value', function(melse){
+
+      $scope.clubBar = melse.val();
+      $scope.members = melse.child('members').val()
+      $scope.titles  = melse.child('titles').val()
+      //console.log($scope.members)
+
+   })
 
 
-// get messages as they come
-$timeout(function() {
-  var currentUser = $scope.currentUser;
-    $scope.$apply(function(){
-      messageboxSrvc.messagebox(currentUser.uid, $stateParams.clublistId).then(function(messagebox){
+    ref.onAuth(function(currentUser){
 
-        $scope.messagebox = messagebox;
-        $scope.messageboxCount = Object.keys(messagebox).length
+        $scope.currentUser = currentUser;
 
+           // check messages for this user
+         messageboxSrvc.messagebox(currentUser.uid, $stateParams.clublistId).then(function(messagebox){
+
+            $timeout(function() {
+                 $scope.$apply(function(){
+                 // message live updating 
+                 $scope.messagebox = messagebox;
+                 $scope.messageboxCount = Object.keys(messagebox).length
+              }) 
+              });
+         })
+       
+
+           var clubPostionRef = clubRef.child("members/" + currentUser.uid + "/position");
+           var clubRequestRef = clubRef.child("requests");
+
+           // check request for this user
+           var position = clubPostionRef.on('value', function (snap) {
+            console.log(snap.val())
+           
+             
+            if((snap.val().indexOf('FOUNDER') > -1 || snap.val().indexOf('VP HR') > -1) ) {
+               $scope.rightToAdd = true
+               console.log($scope.rightToAdd)
+              clubRequestRef.on('value', function(result){
+              $timeout(function() {
+                 $scope.$apply(function(){
+
+               
+
+                 // rquests live updateing
+                 $scope.requestCount = result.numChildren();
+                 $scope.requests = result.val();
+
+              }) 
+              });
+          
+
+              })
+           
+
+            } 
+           
+        })
     })
-})
-  
-});
-
-
- $scope.goToMessages = function() {
-   $state.go('app.messagebox', {clublistId: $stateParams.clublistId})
- }
-
-//name for the top bar 
- clubRef.once('value', function(melse){
-    $scope.clubBar = melse.val();
- })
-
- clubRef.child('members').once('value', function  (snap) {
- //$scope.allUsers = snap.val()
- 
- $scope.allUsers = []; //this array was created for query filters to work properly in the view
-      snap.forEach( function(childSnap){
-        var item = {};
-        item.id = childSnap.key()
-        item.email = childSnap.val().email;
-        item.position = childSnap.val().position;
-
-        //console.log(childSnap.name())
-      
-        $scope.allUsers.push(item);
-
-        //console.log(item);
-      });
-})
 
 
 
- $scope.toPerson = function(person){
-     
-    if($scope.currentUser){
-     
-      toPersonMethod(person, $scope.currentUser)
-    }else{
+   $scope.goToMessages = function() {
+     $state.go('app.messagebox', {clublistId: $stateParams.clublistId})
+   }
 
-     ref.onAuth(function(currentUser){
-        toPersonMethod(person, currentUser)
-      });
 
- }
-}
+
+   $scope.toPerson = function(person){
+       
+      if($scope.currentUser){
+       
+        toPersonMethod(person, $scope.currentUser)
+      }else{
+
+       ref.onAuth(function(currentUser){
+          toPersonMethod(person, currentUser)
+        });
+
+   }
+  }
 
  var toPersonMethod = function(person, user){
 
@@ -115,18 +138,18 @@ $timeout(function() {
 
 
 
-$scope.toPeople = function(title, isGroup, name){
-    // check if in scope or call onAuth. Saves time from checking in onAuth all the time.
-    if($scope.currentUser){
-      currentUser = $scope.currentUser
-      toPeopleMethod(title,isGroup, name)
-    }else{
-      ref.onAuth(function(currentUser){
-
+  $scope.toPeople = function(title, isGroup, name){
+      // check if in scope or call onAuth. Saves time from checking in onAuth all the time.
+      if($scope.currentUser){
+        currentUser = $scope.currentUser
         toPeopleMethod(title,isGroup, name)
-      })
+      }else{
+        ref.onAuth(function(currentUser){
+
+          toPeopleMethod(title,isGroup, name)
+        })
+      }
     }
-  }
 
 var toPeopleMethod = function(title, isGroup, name){
 
@@ -290,6 +313,7 @@ $scope.takePicture = function(){
 
   }
 
+
 var sendMessageMethod = function(message,currentUser){
 
 
@@ -303,16 +327,10 @@ var sendMessageMethod = function(message,currentUser){
           messageAllRef.push({sender: currentUser, message: messageData,
            position: positionSnapshot.val(), createdAt: Firebase.ServerValue.TIMESTAMP}, function(res) {
           $scope.loading = false //.././././././././././././.
-            // var messageboxItem = {}
-            // messageboxItem[currentUser.id] = false;
-            // clubRef.child("memebers/" + person + "/messagebox").update(messageboxItem)
-            //console.log(res)
+ 
             $cordovaDialogs.beep(1)
             //console.log('beep......')
             $scope.imageData = "" /* clean the scope from lingering around for next messages */
-            //alert("before beep")
-          
-             //alert("after beep")
 
           });
 
@@ -320,46 +338,9 @@ var sendMessageMethod = function(message,currentUser){
 
   }
 
-  $scope.newMember = {}
-  $scope.requestingMember = {}
-
-  clubRef.child('titles').once('value', function(titles){
-    //console.log(titles.val())
-     $scope.titles = titles.val();
-     //['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP ONE', 'VP TWO', 'MEMBER', 'GUEST']; 
-  })
-  // $scope.titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP Marketing', 'VP HR', 'VP ONE', 'VP TWO', 'MEMBER', 'GUEST'];
-
-    ref.onAuth(function(currentUser){
-     // currentUser.id = currentUser.uid.split(":")[1]
-
-       var clubPostionRef = clubRef.child("/members/" + currentUser.uid + "/position");
-       var clubRequestRef = clubRef.child("requests");
-       var position = clubPostionRef.on('value', function (snap) {
-         // body...
-        if((snap.val().indexOf('FOUNDER') > -1 || snap.val().indexOf('VP HR') > -1) && snap.val()) {
-          clubRequestRef.on('value', function(result){
-
-          $timeout(function() {
-             $scope.$apply(function(){
-             $scope.rightToAdd = true
-             $scope.requestCount = result.numChildren();
-             //console.log($scope.requestCount)
-             $scope.requests = result.val();
-          }) 
-          });
-      
-
-          })
-       
-
-        } 
-       })
-   })
 
 
   $scope.memeberAddError = ""
-
   $scope.addMember = function(from){
 
     userRef
@@ -384,42 +365,31 @@ var sendMessageMethod = function(message,currentUser){
 
   }
 
+  $scope.selectedUsers = { rule: []}
+  $scope.formGroup = function(groupName){
 
-  $scope.formGroup = function(users, name){
+   
+    console.log($scope.selectedUsers.rule)
 
-  //console.log(users)
-
-  var rule = []
-  
-   //reset data value in allUsers arry
-    angular.forEach(  $scope.allUsers, function(value, key) {
-
-      if(value.data){
-        rule.push(value.id) //push it up then reset it back to false
-        value.data = false;
-      }
-       
-      
-    });
     //console.log(rule)
-    if(rule.length === 0){
+    if($scope.selectedUsers.rule.length === 0 || groupName === null){
 
-      $scope.groupFormingError = "Please add at least one name"
-    
+           $scope.groupFormingError = "Choose at least one name and don't forget to name the new group"
+      
       return; 
 
     }else{
 
        $scope.memberModal.hide()
-       $scope.toPeople(rule, true, name); //send true to toPeopele() so it can know this sent it.
+      // $scope.toPeople($scope.selectedUsers.rule, true, name); //send true to toPeopele() so it can know this sent it.
        
     }
 
-    // console.log("akljsdfkljasdklfjaskldfjklasjdfklasdjfklasdjfkljasdklfj")
-    // console.log(rule)
-    //$scope.toPeople(rule,true); //send true to toPeopele() so it can know this sent it.
+    $scope.toPeople(rule,true); //send true to toPeopele() so it can know this sent it.
  
 }
+
+
 
   $scope.addRequestingMember = function(id,email,position){
 

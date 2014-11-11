@@ -127,16 +127,22 @@
             </label>
           </div>
 
-        <li class="item item-checkbox" ng-repeat="user in allUsers" ng-if="user.email"> 
-           <label class="checkbox">
-             <input type="checkbox" name="users" ng-model="allUsers[$index].data" value="user.email">
+        <li class="item item-checkbox" ng-repeat="(key, val) in members" ng-if="key != currentUser.uid"> 
+
+          <label  class="checkbox" >
+            <input type="checkbox" checklist-model="selectedUsers.rule" checklist-value="key"> 
+          </label>
+           {{val.email | shaveEmail}}
+
+         <!--   <label class="checkbox">
+             <input type="checkbox" name="users" ng-model="memebers" value="user.email">
            </label>
-             {{user.email | shaveEmail}}
+             {{user.email | shaveEmail}} -->
              <!-- <pre>{{user | json}}</pre> -->
         </li>
       </ul>
           <label class="item" >
-          <button class="button button-block" style="background-color:#8585FF; color:white" ng-click="formGroup(allUsers, groupName)">Create group</button>
+          <button class="button button-block" style="background-color:#8585FF; color:white" ng-click="formGroup(groupName)">Create group</button>
           </label>
     </div>
 

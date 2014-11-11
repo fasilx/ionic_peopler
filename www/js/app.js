@@ -1,7 +1,7 @@
 
 angular.module
 ('starter', ['ionic', 'firebase', 'others', 'clublist', 'ui.utils',
-             'main','separate','ngCordova', 'monospaced.elastic','service'])
+             'main','separate','ngCordova', 'monospaced.elastic','service', 'checklist-model'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
