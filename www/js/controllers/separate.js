@@ -1,37 +1,31 @@
 angular.module('separate', [])
 .controller('SeparateCtrl', function($scope, $stateParams, $firebase, $ionicScrollDelegate,
- $firebaseSimpleLogin, $ionicModal, capturePictureSrvc, $state, $timeout, $cordovaDialogs, $filter) {
+                                     $firebaseSimpleLogin, $ionicModal, capturePictureSrvc, 
+                                     $state, $timeout, $cordovaDialogs, $filter) {
 
   var clubRef = new Firebase($scope.URL + "/clubs").child($stateParams.clublistId);
   var clubSync = $firebase(clubRef);
   var userRef = new Firebase($scope.URL + "/users")
- // var messageAllRef = new Firebase($scope.URL + "/messages/" + $stateParams.clublistId + "/all")
- var messageGroupRef = new Firebase($scope.URL + "/messages/" + 
-  $stateParams.clublistId + "/group/" + $stateParams.refName)
- var messagePersonRef = new Firebase($scope.URL + "/messages/" +
-  $stateParams.clublistId + "/person/" + $stateParams.refName)
-
- var ref = new Firebase($scope.URL)
+  var messageGroupRef = new Firebase($scope.URL + "/messages/" + 
+      $stateParams.clublistId + "/group/" + $stateParams.refName)
+  var messagePersonRef = new Firebase($scope.URL + "/messages/" +
+      $stateParams.clublistId + "/person/" + $stateParams.refName)
+  var ref = new Firebase($scope.URL)
 
 
- $scope.scrollBottom = function(){
-  if(!$scope.ignoreScrollBottom){
-   $ionicScrollDelegate.scrollBottom();
- }
- 
-
-}
+  $scope.scrollBottom = function(){
+    if(!$scope.ignoreScrollBottom){
+     $ionicScrollDelegate.scrollBottom();
+   }
+  }
 
   $scope.imageData = ""; // if picture is taken use that, otherwise use empty string
   $scope.takePicture = function(){   
    capturePictureSrvc.takePicture().then(function(imageMelse) {
     $scope.imageData = imageMelse;
+    })
+  }
 
-  })
- }
-
-
-  //if(angular.isDefined($stateParams.rule)){
 
     if ($stateParams.messageType === 'person') {
       var messageRef = messagePersonRef;
@@ -49,97 +43,65 @@ angular.module('separate', [])
       $scope.separateBar = $stateParams.position
     }
 
+  var recievedMessagesMethod = function(){
 
+   messageRef.limitToLast(load).on('value',function(allMessages){
+        $scope.recievedMessages = []
+          // console.log(Object.keys(allMessages.val()).indexOf('receivervh'))
+       angular.forEach(allMessages.val(), function(value, key) {
+          if(key !== 'sender' && key !== 'receiver')
+          $scope.recievedMessages.push(value)
+        });
 
+        $timeout(function() {
+         $scope.$apply(function(){
 
+          //console.log(allMessages.val())
+          // $scope.recievedMessages = allMessages.val()
 
-recievedMessagesMethod = function(){
-
-     messageRef.limitToLast(load).on('value',function(allMessages){
-          $scope.recievedMessages = []
-            // console.log(Object.keys(allMessages.val()).indexOf('receivervh'))
-         angular.forEach(allMessages.val(), function(value, key) {
-            if(key !== 'sender' && key !== 'receiver')
-            $scope.recievedMessages.push(value)
-          });
-
-          $timeout(function() {
-           $scope.$apply(function(){
-
-            //console.log(allMessages.val())
-            // $scope.recievedMessages = allMessages.val()
-
-            $scope.recievedMessagesLength = allMessages.numChildren()
-            //console.log($scope.recievedMessagesLength)
-          })
-         }); 
+          $scope.recievedMessagesLength = allMessages.numChildren()
+          //console.log($scope.recievedMessagesLength)
         })
-
-}
+       }); 
+      })
+  }
 
 
  var load = 10;
-$scope.loadMore = function(){
+ $scope.loadMore = function(){
         // adds 10 more data everytime it is called.
 
-        load =  load + 10;
-
-
+    load =  load + 10;
     recievedMessagesMethod()
 
         $scope.ignoreScrollBottom = true;
-        //$ionicScrollDelegate.scrollTop();
-        //console.log("scrolling top")
-
-}
-
-
-$scope.ignoreScrollBottom = false;  //set this to false if 'load more' button is not pressed
-
-
-recievedMessagesMethod();
-
-  //console.log(list)
-
-// }
-
-
-// ref.onAuth(function(currentUser){
-//   //currentUser.id = currentUser.uid.split(":")[1] //the new simple login does not proved id
-//   $scope.me = currentUser;
-// })
-
-
-
-$scope.sendMessage = function(message){
-
-  
-  if($scope.currentUser){
-
-    sendMessageMethod(message,$scope.currentUser)
-
-
-  }else{
-
-    ref.onAuth(function(message,currentUser){
-      //currentUser.id = currentUser.uid.split(":")[1]
-
-      $scope.currentUser = currentUser; // set current user in scope while scope is alive
-      sendMessageMethod(currentUser)
-    })
   }
 
-}
+  $scope.ignoreScrollBottom = false;  //set this to false if 'load more' button is not pressed
+
+  recievedMessagesMethod();
 
 
-var sendMessageMethod = function(message,currentUser){
+  $scope.sendMessage = function(message){
 
-              //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
+  
+    if($scope.currentUser){
+      sendMessageMethod(message,$scope.currentUser)
+    }else{
+      ref.onAuth(function(message,currentUser){
+        //currentUser.id = currentUser.uid.split(":")[1]
+        $scope.currentUser = currentUser; // set current user in scope while scope is alive
+        sendMessageMethod(currentUser)
+      })
+    }
+
+  }
+
+
+  var sendMessageMethod = function(message,currentUser){
+
         var ref = new Firebase($scope.URL);
-
-
         var position = clubRef.child("members/" + currentUser.uid + "/position").once( 'value', function(positionSnapshot) {
-        
         var messageData = {message: message, image: $scope.imageData}
 
         $scope.loading = true //.././././././././././././.
@@ -157,12 +119,7 @@ var sendMessageMethod = function(message,currentUser){
 
           $cordovaDialogs.beep(1)
           $scope.imageData = "" /* clean the scope from lingering around for next messages */
-
         });
-
-       });
-
-}
-
-
+    });
+  }
 })

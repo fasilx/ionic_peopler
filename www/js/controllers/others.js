@@ -5,22 +5,14 @@ angular.module('others', [])
 .controller("CreateCtrl", function($scope, $firebase, $firebaseSimpleLogin, $state, capturePictureSrvc) {
 
   var clubRef = new Firebase($scope.URL + "/clubs");
-
-  // sync = $firebase(clubRef);
-  //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
   var ref = new Firebase($scope.URL);
 
-
   $scope.club = {name: "", description: ""}
-
-
-
   $scope.imageData = ""; // if picture is taken use that, otherwise use empty string
+  
   $scope.takePicture = function(){
-
    capturePictureSrvc.takePicture().then(function(imageMelse) {
-    $scope.imageData = imageMelse;
-
+   $scope.imageData = imageMelse;
   })
  }
 
@@ -28,8 +20,7 @@ angular.module('others', [])
 
 
  $scope.createClub = function(club){
-  //console.log(club)
-  // validation
+
   if (club.name === "" || club.description === "") {
     $scope.creationError = "Name and description of Club is required";
     //$scope.$apply();
@@ -42,29 +33,29 @@ angular.module('others', [])
       $scope.imageData = $scope.imageData ||  $scope.defaultImage;
 
     //club.name and club.description, etc... are found from the $scope of the main.js, the global scope context
-     var newChildRef = clubRef.push({name: club.name, titles: titles, description: club.description, avatar: $scope.imageData, founders_id: currentUser.uid},
-            function(error) {
+    var newChildRef = clubRef.push({name: club.name, titles: titles, description: club.description, avatar: $scope.imageData, founders_id: currentUser.uid},
+      function(error) {
       //console.log("added record with id " + newChildRef.key());
       if (error === null){
 
 
-      var clublistId = newChildRef.key();
-      var userId = currentUser.uid
-      var messageRef = new Firebase($scope.URL + "/messages/" + clublistId)
-      var memberRef = new Firebase($scope.URL + "/clubs/" + clublistId)
+        var clublistId = newChildRef.key();
+        var userId = currentUser.uid
+        var messageRef = new Firebase($scope.URL + "/messages/" + clublistId)
+        var memberRef = new Firebase($scope.URL + "/clubs/" + clublistId)
 
-      memberRef.update({members: userId}, function(){
-       var clubMemberIdRef = new Firebase($scope.URL + "/clubs/" + clublistId + "/members/" + userId)
-       var userIdRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
+        memberRef.update({members: userId}, function(){
+         var clubMemberIdRef = new Firebase($scope.URL + "/clubs/" + clublistId + "/members/" + userId)
+         var userIdRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
-       clubMemberIdRef.update({position: ['FOUNDER'], email: currentUser.password.email, messagebox: "init"})
-       messageRef.update({all: "init", group: "init", person: "init"})
+         clubMemberIdRef.update({position: ['FOUNDER'], email: currentUser.password.email, messagebox: "init"})
+         messageRef.update({all: "init", group: "init", person: "init"})
 
-       var obj = {};
-       obj[clublistId] = true;
-       userIdRef.update(obj) 
+         var obj = {};
+         obj[clublistId] = true;
+         userIdRef.update(obj) 
 
-       $scope.createModal.hide(); 
+         $scope.createModal.hide(); 
         //make sure to remove modal after use.Or it will linger cause uninteded stuff
         $scope.$on('$destroy', function() {
           $scope.createModal.remove();
@@ -72,10 +63,10 @@ angular.module('others', [])
 
         $state.go('app.single', {clublistId: newChildRef.key()})
       }) 
-    }
+      }
     });
-})
-}
+  })
+  }
 
   //this scope is in www/js/controllers/main.js
 })
@@ -87,7 +78,7 @@ angular.module('others', [])
           //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
           var ref = new Firebase($scope.URL);
 
-         $scope.list = [];
+          $scope.list = [];
           
           var clubRef = new Firebase($scope.URL + "/clubs")
 
@@ -103,26 +94,26 @@ angular.module('others', [])
             });
 
 
-         
+
           ref.onAuth(function(currentUser){
          // currentUser.id = currentUser.uid.split(":")[1]
 
               $scope.loading = true;  //...../...../...../...../
-               var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
+              var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
 
-             
-               userIdClubRef.on('value', function(res){
 
-                 if(res.val()){
-                  var clubkeys = Object.keys(res.val())
+              userIdClubRef.on('value', function(res){
+
+               if(res.val()){
+                var clubkeys = Object.keys(res.val())
                  // console.log(clubkeys.length)
-                   
-                 }else {
+
+               }else {
                    $scope.loading = false;  //...../...../...../...../
                  }
                  
-                
-                angular.forEach(clubkeys, function(key, val){
+
+                 angular.forEach(clubkeys, function(key, val){
                   //alert("adding.....")
                   //console.log(childSnapshot.key())
 
@@ -131,56 +122,56 @@ angular.module('others', [])
 
                       //console.log(snap.val())
                       $scope.loading = false;  //...../...../...../...../
-                    
-                    
-                     var item = []
-                     item.id = snap.key()
-                     item.name = snap.val().name
-                     item.description = snap.val().description
-                     item.avatar = snap.val().avatar
+
+
+                      var item = []
+                      item.id = snap.key()
+                      item.name = snap.val().name
+                      item.description = snap.val().description
+                      item.avatar = snap.val().avatar
 
                      // Object.keys() can be called on non-object, so protect that by if...else
                      if(angular.isObject(snap.val().members[currentUser.uid].messagebox)){
-                        item.messageboxCount = Object.keys(snap.val().members[currentUser.uid].messagebox).length
-                      }else{
-                        item.messageboxCount = 0
-                      }
+                      item.messageboxCount = Object.keys(snap.val().members[currentUser.uid].messagebox).length
+                    }else{
+                      item.messageboxCount = 0
+                    }
 
-                     item.memberCount = Object.keys(snap.val().members).length;
-                     var position = snap.val().members[currentUser.uid].position
-                     item.position = position.toString()
+                    item.memberCount = Object.keys(snap.val().members).length;
+                    var position = snap.val().members[currentUser.uid].position
+                    item.position = position.toString()
 
-                     if ((position.indexOf('FOUNDER') > -1 || position.indexOf('VP HR') > -1 ) && angular.isDefined(snap.val().requests)){
-                       item.requestCount = Object.keys(snap.val().requests).length;  
+                    if ((position.indexOf('FOUNDER') > -1 || position.indexOf('VP HR') > -1 ) && angular.isDefined(snap.val().requests)){
+                     item.requestCount = Object.keys(snap.val().requests).length;  
 
-                     }
+                   }
 
-                      $scope.$apply(function(){
-                         $scope.list.push(item);
+                   $scope.$apply(function(){
+                     $scope.list.push(item);
 
                          //console.log($scope.list)
-  
-                      })
-                  
+
+                       })
+
                        // $scope.$apply()
-               
-                    })
+
+                     })
 
 
-                  });
+});
 
-                  });
+});
 
                   // $timeout(function(){
                   //      $scope.$apply(function(){
-                        
+
                   //        $scope.list.push(item);
                   //        console.log($scope.list)
 
                   //      })
                   //     })
 
-                })
+})
 
 })
 
