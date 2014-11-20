@@ -420,10 +420,10 @@ angular.module('clublist', [])
            obj[clublistId] = true;
            userIdRef.update(obj) 
 
-           $scope.$apply(function(){
+           // $scope.$apply(function(){
 
-              $scope.requestAdded = true;
-           })
+           //    $scope.requestAdded = true;
+           // })
 
            // remove user from request location
             var clubRequestRef = clubRef.child("requests");
@@ -434,6 +434,19 @@ angular.module('clublist', [])
 
       });
   }
+
+    $scope.denyRequestingMember = function(id){
+
+           // remove user from request location
+            var clubRequestRef = clubRef.child("requests");
+            clubRequestRef.child(id).remove(function(){
+              $scope.$apply();
+              //console.log("user removed from requests")
+            });
+
+      
+  }
+
 
 
   $ionicModal.fromTemplateUrl('templates/add-member.html', {

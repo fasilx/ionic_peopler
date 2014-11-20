@@ -387,7 +387,7 @@ angular.module('others', [])
   //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
   var ref = new Firebase($scope.URL);
   var userRef = new Firebase($scope.URL + "/users")
-  
+
     ref.onAuth(function(currentUser){
 
         $scope.users = []
@@ -410,14 +410,19 @@ angular.module('others', [])
 
 })
 
-.controller('SearchCtrl', function($scope, $state, $firebaseSimpleLogin, $firebase, $ionicModal) {
+.controller('SearchCtrl', function($scope, $state, $firebaseSimpleLogin, $firebase, $ionicModal, $ionicLoading) {
 
  var ref = new Firebase($scope.URL);
  var clubRef = new Firebase($scope.URL + "/clubs")
 
  $scope.clubs = [];
 
+
  ref.onAuth(function(currentUser){
+
+       $ionicLoading.show({
+          template: '<i class="ion-loading-c" style="font-size:200%"></i>'
+        });
 
       clubRef.once('value', function(dataSnapshot){
       
@@ -437,6 +442,9 @@ angular.module('others', [])
               $scope.$apply(function(){
               $scope.clubs.push(item);
 
+              $ionicLoading.hide();
+
+              $scope.loading = false;
               $scope.expandPhoto = function(displayItem){
 
                     $scope.displayItem = displayItem; 

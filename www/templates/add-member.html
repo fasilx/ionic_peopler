@@ -37,24 +37,25 @@
                 
                       <div class="item" ng-repeat="(key, data) in requests" style="border-color:#009999;">
 
-                            <div class="row">
-                                <div class="col">
                                   {{data}}
-                                </div>
 
-                                <div class="col">
-                                  <select ng-init="requestingMember.position = titles[8]"
-                                          ng-model="requestingMember.position" ng-options="title for title in titles">
+                                <p>
+                                  <select ng-init="position = '' "
+                                          ng-model="position" ng-options="title for title in titles">
                                   </select>
-                                </div>
-                               </div><!-- row  -->
-                                <div>
-                                 <a ng-hide="requestAdded" class="message" 
-                                          ng-click="addRequestingMember(key,data,requestingMember.position)"
+                                </p>
+                            
+                                 <a class="message" 
+                                          ng-click="addRequestingMember(key, data, position)"
                                            style="background-color:#009999;color:white;">
                                           Accept
                                   </a>
-                                </div>
+                                  <a  class="message" 
+                                          ng-click="denyRequestingMember(key)"
+                                           style="background-color:#FF6699;color:white;">
+                                          Deny
+                                  </a>
+                         
                            
                       </div>
                     </div>
@@ -64,10 +65,10 @@
     
     <div ng-show="showByEmail" ng-controller="UsersCtrl">
 
-      <div class="bar bar-subheader">
+  <!--     <div class="bar bar-subheader">
         <div class="title" >Hire or Fire</div>
-      </div>
-     <br><br>
+      </div><br> -->
+     <br>
          <div class="list list-inset">
             <label class="item item-input">
               <i class="icon ion-search placeholder-icon"></i>
@@ -78,9 +79,11 @@
           <div class="list">
           <div class="item item-button-right" ng-repeat="user in users | filter:query | limitTo:25" ng-if="user.id !== currentUser.uid">
               {{user.displayName}}
+              <p>
               <select ng-show="!user.clubs[clublistId]" ng-init="position=''" 
                       ng-model="position" ng-options="title for title in titles">
               </select>
+              </p>
               <button ng-show="!user.clubs[clublistId]" class="button button-positive" ng-click="hire(user, position)">
                 Hire
               </button>
