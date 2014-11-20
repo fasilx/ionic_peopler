@@ -1,0 +1,49 @@
+<ion-modal-view>
+<ion-header-bar>
+<h1 class="title">{{clubInfo.name}} <i ng-if="!clubInfo.name" class="ion-loading-c" ></i></h1>
+<div class="buttons">
+  <button class="button button-clear" ng-click="closeEditMyClubModal()">Close</button>
+</div>
+</ion-header-bar>
+<ion-content>
+
+  <!-- {{clubInfo}} -->
+
+  <div class="list">
+
+       <div ng-show="errorMessage" class="row responsive-sm">
+          
+            <div class="col error message" style="text-align:center">{{errorMessage}}</div>
+
+        </div>
+
+   <label class="item item-input item-stacked-label">
+    <span class="input-label">{{clubInfo.name}}<i ng-if="!clubInfo.name" class="ion-loading-c"></i></span>
+    <input type="text" ng-model="club.name" placeholder="enter new club name here">
+  </label>
+  <label class="item item-input item-stacked-label">
+    <span class="input-label">{{clubInfo.description}}<i ng-if="!clubInfo.description" class="ion-loading-c"></i></span>
+    <input type="text" ng-model="club.description" placeholder="enter new description here">
+  </label>
+</div>
+
+  <div>
+  <img ng-hide="$scope.imageData" class="message-box" ng-src="data:image/jpeg;base64,{{clubInfo.avatar}}" 
+          height="80" width="80">
+  </div>
+     <div>
+  <img ng-show="$scope.imageData" class="message-box" ng-src="data:image/jpeg;base64,{{$scope.imageData}}" 
+          height="80" width="80">
+   </div>
+
+  <div class="col button button-clear" ng-click="takePicture()">
+  <i class="icon ion-camera theme"></i> Add or change profile picture
+</div>
+
+<button class="button button-block button-positive" ng-click="changeClubProfile(clubKey,club)">
+  Change Now
+</button>
+
+
+</ion-content>
+</ion-modal-view>

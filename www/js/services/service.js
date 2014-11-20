@@ -68,13 +68,13 @@ return deferred.promise;
 
               if (index === 0) {sourceType = Camera.PictureSourceType.CAMERA} else{sourceType = Camera.PictureSourceType.SAVEDPHOTOALBUM};
               var options = { 
-                quality : 95, 
+                quality : 75, 
                 destinationType : Camera.DestinationType.DATA_URL, 
                 sourceType : sourceType, 
                 allowEdit : true,
                 encodingType: Camera.EncodingType.JPEG,
-                targetWidth: 100,
-                targetHeight: 100,
+                targetWidth: 400,
+                targetHeight: 400,
                 popoverOptions: CameraPopoverOptions,
                 saveToPhotoAlbum: false
               };

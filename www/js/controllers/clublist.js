@@ -28,6 +28,16 @@ angular.module('clublist', [])
       $scope.clubBar = melse.val();
       $scope.members = melse.child('members').val()
       $scope.titles  = melse.child('titles').val()
+
+      //console.log($scope.members)
+      $scope.membersAsArray = []
+      angular.forEach($scope.members, function(val,key){
+
+        var item = val;
+        item.id = key;
+        $scope.membersAsArray.push(item);
+
+      })
   })
 
 
@@ -44,6 +54,7 @@ angular.module('clublist', [])
            // message live updating 
            $scope.messagebox = messagebox;
            $scope.messageboxCount = Object.keys(messagebox).length
+           //console.log(messagebox)
          }) 
       });
     })
@@ -54,7 +65,7 @@ angular.module('clublist', [])
 
      // check request for this user
      var position = clubPostionRef.on('value', function (snap) {
-      console.log(snap.val())
+      //console.log(snap.val())
 
 
       if((snap.val().indexOf('FOUNDER') > -1 || snap.val().indexOf('VP HR') > -1) ) {
@@ -341,6 +352,7 @@ angular.module('clublist', [])
      
     
       var member_id =  Object.keys(snap.val())[0] 
+      
 
       $scope.addRequestingMember(member_id, $scope.newMember.email,$scope.newMember.position)
      

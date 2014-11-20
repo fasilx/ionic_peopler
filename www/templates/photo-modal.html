@@ -1,0 +1,13 @@
+<ion-modal-view>
+<ion-header-bar>
+<h1 class="title">{{displayItem.name}}</h1>
+<div class="buttons">
+  <button class="button button-clear" ng-click="closePhotoModal()">Close</button>
+</div>
+</ion-header-bar>
+<ion-content ng-init="showRequests=true">
+
+<img class="full-image" ng-src="data:image/jpeg;base64,{{displayItem.avatar}}">
+
+</ion-content>
+</ion-modal-view>

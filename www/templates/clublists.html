@@ -15,21 +15,28 @@
 <!--  {{list}} -->
 <div class="list">
 
-  <a ng-class="{'separate': item.position !== 'FOUNDER'}" 
-     class="item item-avatar" style="border-color:#8585FF" ng-repeat="item in list"  
-     ng-click="goToMessages(item.id, item.messageboxCount)">
-    <img class="message-avatar" ng-src="data:image/jpeg;base64,{{item.avatar}}" 
-    alt="img/ionic.png">
+  <div ng-class="{'separate': item.position !== 'FOUNDER'}" 
+     class="item item-avatar item-icon-right" style="border-color:#8585FF" ng-repeat="item in list">
 
-    <h3>{{item.name}} ({{item.memberCount}}<i ng-show="item.memberCount===1">member</i>
-                                           <i ng-show="item.memberCount > 1">members</i>)</h3> 
+     <!-- TODO -->
+    <img ng-click="expandPhoto(item)" class="message-avatar" ng-src="data:image/jpeg;base64,{{item.avatar}}" alt="img/ionic.png">
+    <a href ng-show="item.position === 'FOUNDER' " ng-click="editMyClub(item)">Edit Club Info</a>
+   
+    <div  ng-click="goToMessages(item.id, item.messageboxCount)">
+    <h3>{{item.name}}</h3> <i style="float:right" class="ion-chevron-right" ></i>
+    <p>{{item.description}} </p> 
+    <i ng-hide="item.name" class="ion-loading-c"></i>
+    <h3>Founded by {{item.founder | shaveEmail}}</h3>
+    <p>{{item.memberCount}}<i ng-show="item.memberCount===1"> member</i> <i ng-show="item.memberCount > 1"> members</i></p> 
+    
 
-        <h4>{{item.position}}</h4>   
+        <h4>You are a {{item.position}}</h4>   
         <i><h4 ng-show="item.requestCount > 0" 
           class="request-count">{{item.requestCount}} Requests</h4></i>
-        <p>{{item.description}} </p>  
-    <h5 ng-show="item.messageboxCount > 0" class="badge badge-assertive">{{item.messageboxCount}}</h5>      
-  </a>
+        
+    <h5 ng-show="item.messageboxCount > 0" class="badge badge-assertive">{{item.messageboxCount}}</h5> 
+   </div>
+  </div>
 
 </div>
 </ion-content>

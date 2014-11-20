@@ -28,12 +28,15 @@ angular.module('others', [])
   }
 
   ref.onAuth(function(currentUser){
+
+    if(currentUser === null) return;
       //currentUser.id = currentUser.uid.split(":")[1]
       var titles = ['CEO', 'COO', 'CFO', 'CTO', 'VP MARKETING', 'VP HR', 'VP PR', 'VP LAW', 'MEMBER', 'GUEST']; 
       $scope.imageData = $scope.imageData ||  $scope.defaultImage;
 
     //club.name and club.description, etc... are found from the $scope of the main.js, the global scope context
-    var newChildRef = clubRef.push({name: club.name, titles: titles, description: club.description, avatar: $scope.imageData, founders_id: currentUser.uid},
+    var newChildRef = clubRef.push({name: club.name, titles: titles, description: club.description, 
+                                    avatar: $scope.imageData, founders_id: currentUser.uid, founders_name: currentUser.password.email},
       function(error) {
       //console.log("added record with id " + newChildRef.key());
       if (error === null){
@@ -72,7 +75,7 @@ angular.module('others', [])
 })
 
 
-.controller('ClublistsCtrl', function($scope, $firebaseSimpleLogin, $state, $timeout) {
+.controller('ClublistsCtrl', function($scope, $firebaseSimpleLogin, $state, $timeout, $ionicModal) {
 
 
           //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
@@ -82,21 +85,139 @@ angular.module('others', [])
           
           var clubRef = new Firebase($scope.URL + "/clubs")
 
+   
+
+         $scope.editMyClub = function(editableItems){
+
+
+          $scope.club = {name: "", description: ""}
+
+              ref.onAuth(function(currentUser){
+
+                clubRef.child(editableItems.id).on('value', function(myClub){
+                  //console.log(myClub.val())
+                    if(myClub.val().founders_id === currentUser.uid){
+
           
+                           $scope.clubInfo = myClub.val();
+                           $scope.clubKey = myClub.key();
+              
 
+                           // $scope.$apply();
 
-          ref.onAuth(function(currentUser){
-              // clublistId = currentUser.uid.split(":")[1]
+                
 
-              $scope.goToMessages = function(clublistId, count){
-                $state.go('app.single', {clublistId: clublistId})
+                    }
+
+                })
+
+              })
+
+            $scope.editableItems = editableItems;
+            $scope.openEditMyClubModal();
+          
+         }
+
+         $scope.changeClubProfile = function(clubKey,club){
+
+              
+             console.log($scope.imageDatas)
+
+              if(club === null && $scope.imageData === ''){
+                // $scope.errorMessage = "Please add new name or description"
+                //console.log("case 0")
+                $scope.closeEditMyClubModal();
+                return;
               }
-            });
+
+              ref.onAuth(function(currentUser){
+                //console.log($scope.clubInfo)
+
+                    clubRef.child(clubKey)
+                           .update({name: club.name || $scope.clubInfo.name, 
+                                    description: club.description || $scope.clubInfo.description,
+                                    avatar: $scope.imageData || $scope.clubInfo.avatar}, function(done){
+                              // console.log("case 1")
+                              $scope.closeEditMyClubModal();
+                              $scope.imageData = ""
+                              $scope.club = {}
+                              $scope.clubInfo = {}
+
+                             })
+
+                // if($scope.imageData !== null && club.name !== null && club.description !== null){
+                // clubRef.child(clubKey).update({name: club.name, description: club.description,
+                //              avatar: $scope.imageData}, function(done){
+                //               console.log("case 1")
+                //               $scope.closeEditMyClubModal();
+                //               $scope.imageData = ""
+                //               $scope.club = {}
+
+                //              })
+
+                // }else if($scope.imageData === null && club.name !== null && club.description !== null)
+                // {
+
+                //    clubRef.child(clubKey).update({name: club.name, description: club.description}, function(done){
+                //               console.log("case 2")
+                //               $scope.closeEditMyClubModal();
+                //               $scope.imageData = ""
+
+                //              })
+
+                // }else if ($scope.imageData === null && club.name !== null && club.description === null){
+                //       clubRef.child(clubKey).update({name: club.name}, function(done){
+                //               console.log("case 3")
+                //               $scope.closeEditMyClubModal();
+                //               $scope.imageData = ""
+
+                //              })
+
+
+                // }else if($scope.imageData === null && club.name === null && club.description !== null){
+
+                //         clubRef.child(clubKey).update({description: club.description}, function(done){
+                //               console.log("case 4")
+                //               $scope.closeEditMyClubModal();
+                //               $scope.imageData = ""
+
+                //              })
+
+                // }else if ($scope.imageData !== null && club.name === null && club.description === null){
+
+                //      clubRef.child(clubKey).update({avatar: $scope.imageData}, function(done){
+                //               console.log("case 5")
+                //               $scope.closeEditMyClubModal();
+                //               $scope.imageData = ""
+
+                //              })
+
+                // }else {
+                //             console.log("case 6")
+                //    $scope.closeEditMyClubModal();
+                // }
+
+
+              })
+
+         }
+
+
+          // ref.onAuth(function(currentUser){
+          //     // clublistId = currentUser.uid.split(":")[1]
+
+            
+          //   });
 
 
 
           ref.onAuth(function(currentUser){
          // currentUser.id = currentUser.uid.split(":")[1]
+              if(currentUser === null) return;
+
+              $scope.goToMessages = function(clublistId, count){
+                $state.go('app.single', {clublistId: clublistId})
+              }
 
               $scope.loading = true;  //...../...../...../...../
               var userIdClubRef = new Firebase($scope.URL + "/users/" + currentUser.uid + "/clubs")
@@ -126,6 +247,7 @@ angular.module('others', [])
 
                       var item = []
                       item.id = snap.key()
+                      item.founder = snap.val().founders_name
                       item.name = snap.val().name
                       item.description = snap.val().description
                       item.avatar = snap.val().avatar
@@ -146,14 +268,19 @@ angular.module('others', [])
 
                    }
 
+                   $timeout(function(){
                    $scope.$apply(function(){
                      $scope.list.push(item);
 
-                         //console.log($scope.list)
+                        $scope.expandPhoto = function(displayItem){
 
+                              $scope.displayItem = displayItem; 
+                              $scope.openPhotoModal();
+                            
+                           }
                        })
 
-                       // $scope.$apply()
+                       })
 
                      })
 
@@ -172,6 +299,64 @@ angular.module('others', [])
                   //     })
 
 })
+
+
+
+        $ionicModal.fromTemplateUrl('templates/photo-modal.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+          $scope.photoModal = modal;
+        });
+        $scope.openPhotoModal = function() {
+          $scope.photoModal.show();
+        };
+        $scope.closePhotoModal = function() {
+          $scope.photoModal.hide();
+        };
+        //Cleanup the modal when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.photoModal.remove();
+        });
+        // Execute action on hide modal
+        $scope.$on('photoModal.hidden', function() {
+          // Execute action
+        });
+        // Execute action on remove modal
+        $scope.$on('photoModal.removed', function() {
+          // Execute action
+        });
+
+
+        $ionicModal.fromTemplateUrl('templates/editMyClub-modal.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+          $scope.editMyClubModal = modal;
+        });
+        $scope.openEditMyClubModal = function() {
+          $scope.editMyClubModal.show();
+        };
+        $scope.closeEditMyClubModal = function() {
+          $scope.editMyClubModal.hide();
+        };
+        //Cleanup the modal when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.editMyClubModal.remove();
+        });
+        // Execute action on hide modal
+        $scope.$on('editMyClubModal.hidden', function() {
+          // Execute action
+        });
+        // Execute action on remove modal
+        $scope.$on('editMyClubModal.removed', function() {
+          // Execute action
+        });
+
+
+
+
+
 
 })
 
@@ -194,90 +379,107 @@ angular.module('others', [])
 
 })
 
-.controller('SearchCtrl', function($scope, $state, $firebaseSimpleLogin, $firebase) {
+.controller('SearchCtrl', function($scope, $state, $firebaseSimpleLogin, $firebase, $ionicModal) {
 
-  // var dataRef = new Firebase($scope.URL);
-
- //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
  var ref = new Firebase($scope.URL);
-
  var clubRef = new Firebase($scope.URL + "/clubs")
 
-  //use Object in view by declaring it here
-
-// clubRef.on('value', function(res){
  $scope.clubs = [];
 
  ref.onAuth(function(currentUser){
-      //currentUser.id = currentUser.uid.split(":")[1]
 
       clubRef.once('value', function(dataSnapshot){
-      //console.log(dataSnapshot.val())
+      
+          dataSnapshot.forEach( function(childSnapshot){
 
-      dataSnapshot.forEach( function(childSnapshot){
+           if(!childSnapshot.child('members').hasChild(currentUser.uid)){
 
-       if(!childSnapshot.hasChild('members/' + currentUser.uid)){
+            var item = childSnapshot.val()
+            item.id = childSnapshot.key()
+            item.memberCount = childSnapshot.child('members').numChildren();
 
-        var item = childSnapshot.val()
-        item.id = childSnapshot.key()
-        item.memberCount = childSnapshot.child('members').numChildren();
 
-        if(childSnapshot.hasChild( "requests/" + currentUser.uid )){
-          item.pendding = true;
-        }
+              if(childSnapshot.hasChild( "requests/" + currentUser.uid )){
+                item.pendding = true;
+              }
 
-        $scope.$apply(function(){
-          $scope.clubs.push(item);
-                //console.log($scope.clubs)
+              $scope.$apply(function(){
+              $scope.clubs.push(item);
+
+              $scope.expandPhoto = function(displayItem){
+
+                    $scope.displayItem = displayItem; 
+                    $scope.openPhotoModal();
+                  
+                 }
+
+
               })
+          }
 
-
-      }
-
-    });
-
-
-    })
+        });
 
 
     })
+ })
 
 
  $scope.success = "";
  $scope.sending = false;
-// })
-$scope.joinRequest = function(clublistId){
+  $scope.joinRequest = function(clublistId){
 
   ref.onAuth(function(currentUser){
-      //currentUser.id = currentUser.uid.split(":")[1]
-
-
+   
       var item = {}
-      //console.log(currentUser.id)
+      // this will add .. simplelogin:124:email@email.com at this location
       item[currentUser.uid] = currentUser.password.email;
       clubRef.child(clublistId + "/requests").update(item,function(error){
 
         if(error === null){
-
           $scope.$apply(function(){
             $scope.success = clublistId;
             $scope.sending = false
           })
         }
-
-        else
-          $scope.error = error
-
+        else{
+          $scope.requestError = error.message;
+        }
+          
       })
-
-
-
     });
+  }
 
 
 
-}
+
+        $ionicModal.fromTemplateUrl('templates/photo-modal.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+          $scope.photoModal = modal;
+        });
+        $scope.openPhotoModal = function() {
+          $scope.photoModal.show();
+        };
+        $scope.closePhotoModal = function() {
+          $scope.photoModal.hide();
+        };
+        //Cleanup the modal when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.photoModal.remove();
+        });
+        // Execute action on hide modal
+        $scope.$on('photoModal.hidden', function() {
+          // Execute action
+        });
+        // Execute action on remove modal
+        $scope.$on('photoModal.removed', function() {
+          // Execute action
+        });
+
 
 
 })
+
+
 

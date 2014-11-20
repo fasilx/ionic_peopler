@@ -87,9 +87,12 @@
 
                   <label class="item item-input" style="border-color:#FF9900">
                      <span class="input-label dim">Assign a title   </span>
-                      <select ng-init="newMember.position = titles[8]" ng-model="newMember.position" 
-                              ng-options="title for title in titles" >
-                     </select>
+                      <select ng-init="newMember.position = titles[8]"
+                             ng-model="newMember.position" ng-options="title for title in titles">
+                      </select>
+                    <!--   <select ng-init="newMember.position = titles[8]" 
+                             ng-model="newMember.position" ng-options="title for title in titles" >
+                     </select> -->
                       
                      <br>
                   </label>
@@ -107,10 +110,10 @@
 
 
     <div ng-show="showAllMembers">
-    <!--     <div class="bar bar-subheader">
-        <div class="title"></div>
-      </div> -->
-      <br>
+        <div class="bar bar-subheader">
+        <div class="title" style="font-size:85%"> choose name and members for a new group </div>
+      </div>
+      <br><br>
   
               <div  ng-if="groupFormingError" class="row responsive-sm"> 
                 <div class="error message col" style="text-align:center" ng-show="requests === null">
@@ -122,8 +125,10 @@
        <i style="color:#8585FF; padding-left: 20px;">{{groupName}}</i><br>
         
           <div class="item item-input-inset">
+           
             <label class="item-input-wrapper">
-              <input type="text" ng-model="groupName" placeholder="choose names below and name it here">
+
+              <input type="text" ng-model="groupName" placeholder="Name of this group">
             </label>
           </div>
 
@@ -148,3 +153,5 @@
 
 </ion-content>
 </ion-modal-view>
+
+

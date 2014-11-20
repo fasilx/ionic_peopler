@@ -31,7 +31,7 @@ angular.module
     url: "/search",
     views: {
       'menuContent' :{
-        templateUrl: "templates/search.html"
+        templateUrl: "templates/request.html"
       }
     }
   })

@@ -1,5 +1,15 @@
+<ion-modal-view>
+<ion-header-bar>
+<h1 class="title">Find a Person</h1>
+<div class="buttons">
+  <button class="button button-clear" ng-click="closePopover()">Close</button>
+</div>
+</ion-header-bar>
+<ion-content>
+
+
 <div style="background-color:white;">
-	<br><br><br><br> 
+
 
 			<div class="item-input-inset">
 				<label style="padding-right: 5%;" class="toggle toggle">
@@ -14,14 +24,14 @@
 				</label>
 				<label ng-show="checked" class="item-input-wrapper" style="background-color: #4a87ee; ">
 					<i class="icon ion-ios7-search placeholder-icon" ></i>
-					<input type="search" placeholder="Find A Group" ng-model="title" style="color:white;">
+					<input type="search" placeholder="Find A Group" ng-model="title">
 				</label>
 			</div>
 
-			<div ng-hide="checked" >
+			<div ng-hide="checked">
 				
-					<div ng-repeat="user in members  | filter:email" >
-						<a class="item" href ng-click="toPerson(user.uid)">{{user.email | shaveEmail}}</a>
+					<div ng-repeat="member in membersAsArray  | filter:email" >
+						<a class="item" ng-click="toPerson(member.id)">{{member.email | shaveEmail}}</a>
 						
 					</div>
 					
@@ -29,8 +39,8 @@
 
 			<div ng-show="checked" >
 			
-					<div ng-repeat="pos in members  | unique:'position'" >
-						<a class="item" href ng-click="toPeople(pos.position)">{{pos.position[0]}}</a>
+					<div ng-repeat="pos in membersAsArray | unique:'position' | filter:title" >
+						<a class="item" ng-click="toPeople(pos.position)">{{pos.position[0]}}</a>
 						
 					</div>
 					
@@ -39,3 +49,5 @@
 			<hr>
 
 </div>
+</ion-content>
+</ion-modal-view>

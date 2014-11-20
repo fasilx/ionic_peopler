@@ -21,7 +21,7 @@
     
       <div class="list" >
        
-        <form>
+        <form >
         
 
           <div ng-hide="createUser" >
@@ -82,13 +82,20 @@
             </div>
 
         <label class="item" ng-hide="createUser" style="border-color:#009999">
-          <button style="background-color:#009999;color:white" class="button button-block" ng-click="doLogin($event)">Log In</button>
-          <!-- <button ng-show="createUser" class="button button-block button-positive" ng-click="doSignup()">Sign Up</button> -->
+          <button style="background-color:#009999;color:white" class="button button-block" 
+                  ng-click="doLogin($event);">
+                  <i ng-if="!loading">Log In</i>
+                  <i ng-if="loading" class="ion-loading-c"></i>
+          </button>
+         
         </label>
         
          <label class="item" ng-show="createUser" style="border-color:#FF9900">
-              <!-- <button ng-hide="createUser" class="button button-block button-positive" ng-click="doLogin()">Log In</button> -->
-          <button  style="background-color:#FF9900;color:white;" class="button button-block" ng-click="doSignup();">Sign Up</button>
+          <button style="background-color:#FF9900;color:white;" class="button button-block" 
+                  ng-click="doSignup();">
+                  <i ng-if="!loading">Sign Up</i>
+                  <i ng-if="loading" class="ion-loading-c"></i>
+          </button>
         </label>
 </form>
     

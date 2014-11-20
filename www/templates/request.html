@@ -1,0 +1,47 @@
+<ion-view title="Join A Club" ng-controller="SearchCtrl">
+<ion-nav-buttons side="left">
+<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+</ion-nav-buttons>
+<ion-content class="has-header">
+
+<div class="list list-inset">
+ <label class="item item-input">
+   <i class="icon ion-search placeholder-icon"></i>
+   <input type="text" placeholder="Search" ng-model="query">
+ </label>
+</div>
+<!-- {{clubs}} -->
+<div class="list" >
+
+        <div ng-show="requestError" class="row responsive-sm">
+          
+            <div class="col error message" style="text-align:center">{{requestError}}</div>
+
+          </div>
+
+
+
+  <div class="item item-avatar" ng-repeat="club in clubs | filter:query" style="border-color:#8585FF">
+    <img ng-click="expandPhoto(club)" class="message-avatar" ng-src="data:image/jpeg;base64,{{club.avatar}}" 
+    alt="img/ionic.png">
+    <h4>{{club.name}}
+      (<span><ng-pluralize count="club.memberCount" 
+      when="{'1': '1 member', 'other': '{} members'}">
+    </ng-pluralize>
+  </span>)</h4>
+  <p>Founder: {{club.founders_name | shaveEmail}}</p>
+  <p>{{club.description}}      
+    <i><a class="dim" style="color:#8585FF;float:right" ng-hide="sending || club.pendding" ng-click="joinRequest(club.id); sending = true">
+      Request To Join
+    </a></i>
+
+    <i><a class="dim" style="color:#FF7575;float:right" ng-disabled="success === club.id" ng-show="success === club.id || club.pendding"> 
+      Request Pendding
+    </a></i>
+  </p>
+</div>
+</div>
+
+</ion-content>
+</ion-view>
+

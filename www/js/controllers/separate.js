@@ -32,7 +32,7 @@ angular.module('separate', [])
 
        //name for the top bar
        clubRef.child("/members/" + $stateParams.rule).once('value', function(melse){
-        console.log(melse.val())
+        //console.log(melse.val())
         $scope.separateBar = melse.val().position[0] + " | " + $filter('shaveEmail')(melse.val().email)
       })
 

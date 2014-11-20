@@ -1,7 +1,7 @@
 angular.module('main', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, $ionicNavBarDelegate, $filter,
-  $state, $rootScope, capturePictureSrvc, defaultImage) {
+  $state, $rootScope, capturePictureSrvc, defaultImage, $timeout) {
 
 
   $scope.loginData = {username: "", password: "", passwordConfirmation: ""};
@@ -118,16 +118,23 @@ angular.module('main', [])
   // Perform the login action when the user submits the login form
   $scope.doLogin = function($event) {
 
-  // more validation
-  if ($scope.loginData.username === "" || $scope.loginData.password === "") {
+
+  // more validation                                                          
+  if ($scope.loginData.username === "" || $scope.loginData.password === "" || 
+      // a hack agains angulars validation, it gives undefined for non-email string
+      !angular.isDefined($scope.loginData.username)) {
+
     $scope.loginError = "email or password is required";
+
     //$scope.$apply();
+
     return;
   }
 
+   // console.log($scope.loginData)
+    $event.preventDefault();
 
-    //$event.preventDefault();
-
+  $scope.loading = true;
   ref.authWithPassword({
       email: $scope.loginData.username,
       password: $scope.loginData.password
@@ -144,43 +151,59 @@ angular.module('main', [])
 
           ref.child('users/' + currentUser.uid).update({
             avatar: $scope.imageData
+          }, function(){
+            $scope.imageData = "" //clears image after update
           });
         }
 
-
+        // clean up and route after success longin
         $state.go('app.clublists')
         $scope.loginData = {};
+       
         $scope.loginModal.hide();
+        $timeout(function() {
+           $scope.loading = false; //this has to come after modal.hide() to prevent async effects
+        }, 10);
+       
+
 
       }else {
 
         console.log(error.message)
         $scope.loginError = error.message;
+        $scope.loading = false;
         $scope.$apply();
 
       }
 
     });
+
   }
 
   // Perform the login action when the user submits the login form
   $scope.doSignup = function() {
 
       //check password confirmation
-      if($scope.loginData.passwordConfirmation !== $scope.loginData.password){
+      if($scope.loginData.passwordConfirmation !== $scope.loginData.password ||
+          // a hack agains angulars validation, it gives undefined for non-email string
+        !angular.isDefined($scope.loginData.username)){
 
         $scope.signupError = "Password confirmation does not match";
-        $scope.$apply();
+        
         return;
       }
 
       // more validation
-      if ($scope.loginData.username === "" || $scope.loginData.password === "" || $scope.loginData.passwordConfirmation === "") {
+      if ($scope.loginData.username === "" || $scope.loginData.password === "" || 
+          $scope.loginData.passwordConfirmation === "" || 
+        // a hack agains angulars validation, it gives undefined for non-email string
+        !angular.isDefined($scope.loginData.username)) {
         $scope.signupError = "email or password and confirmation is required";
         //$scope.$apply();
         return;
       }
 
+        $scope.loading = true
          // Create user 
          ref.createUser({email: $scope.loginData.username, password: $scope.loginData.password}, function(error){
 
@@ -202,10 +225,19 @@ angular.module('main', [])
                 provider: currentUser.provider,
                 provider_id: currentUser.uid,
                 avatar: $scope.imageData
-              }, currentUser.password.email);
-              $scope.loginData = {};
+              }, currentUser.password.email, function(){
+
+                   $scope.loginData = {};
+                   $scope.imageData = ""; //clean image buffer
+              });
+           
               $state.go('app.clublists')
               $scope.loginModal.hide();
+
+                 $timeout(function() {
+                     $scope.loading = false; //this has to come after modal.hide() to prevent async effects
+                  }, 10);
+                 
 
 
             }     
@@ -213,6 +245,7 @@ angular.module('main', [])
             else 
             {
               console.log(loginError.message)
+              $scope.loading = false;
               $scope.signupError = loginError.message;
               $scope.$apply();
             }
@@ -223,6 +256,7 @@ angular.module('main', [])
     else{
 
       $scope.signupError = error.message;
+      $scope.loading = false;
       console.log(error.message)
       $scope.$apply();
     }
