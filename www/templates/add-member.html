@@ -13,7 +13,7 @@
       <a class="button" ng-click="showRequests=true;showByEmail=false;showAllMembers=false">
         <i style="font-size:80%;color:#009999">requests</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=true;showAllMembers=false">
-        <i style="font-size:80%;color:#FF9900">via email</i></a>
+        <i style="font-size:80%;color:#FF9900">hire/fire</i></a>
       <a class="button" ng-click="showRequests=false;showByEmail=false;showAllMembers=true">
         <i style="font-size:80%;color:#8585FF">new group</i></a>
     </div>
@@ -62,49 +62,34 @@
      </div>
 
     
-    <div ng-show="showByEmail">
+    <div ng-show="showByEmail" ng-controller="UsersCtrl">
 
-     <!--  <div class="bar bar-subheader">
-        <div class="title" ></div>
-      </div> -->
-     <br>
-       <form name="myForm"> 
-
-                  <div class="error" ng-show="form.email.$dirty && form.email.$error.required">
-                      Invalid email
-                  </div>
-                  <div  class="error" ng-show="memeberAddError !== null">
-                      {{memeberAddError}}
-                  </div>
-
-    
-           <div class="list">
-                  <!-- <i>Add New Members</i> -->
-                  <label class="item item-input" style="border-color:#FF9900">
-                    <!-- <span class="input-label">Member's Email</span> -->
-                    <input type="email" name="email" ng-model="newMember.email" placeholder="Member's Email" required>
-                  </label>
-
-                  <label class="item item-input" style="border-color:#FF9900">
-                     <span class="input-label dim">Assign a title   </span>
-                      <select ng-init="newMember.position = titles[8]"
-                             ng-model="newMember.position" ng-options="title for title in titles">
-                      </select>
-                    <!--   <select ng-init="newMember.position = titles[8]" 
-                             ng-model="newMember.position" ng-options="title for title in titles" >
-                     </select> -->
-                      
-                     <br>
-                  </label>
-
-                <label class="item" style="border-color:#FF9900" >
-                  <button ng-disabled ="myForm.email.$dirty && myForm.email.$invalid" 
-                          class="button button-block " style="background-color:#FF9900; color:white"
-                          ng-click="addMember('fromForm')">message now
-                  </button>
-                </label> 
-          </div> 
-       </form> 
+      <div class="bar bar-subheader">
+        <div class="title" >Hire or Fire</div>
+      </div>
+     <br><br>
+         <div class="list list-inset">
+            <label class="item item-input">
+              <i class="icon ion-search placeholder-icon"></i>
+              <input type="text" ng-model="query" placeholder="Search by email">
+            </label>
+          </div>
+            <!-- {{users}} -->
+          <div class="list">
+          <div class="item item-button-right" ng-repeat="user in users | filter:query | limitTo:25" ng-if="user.id !== currentUser.uid">
+              {{user.displayName}}
+              <select ng-show="!user.clubs[clublistId]" ng-init="position=''" 
+                      ng-model="position" ng-options="title for title in titles">
+              </select>
+              <button ng-show="!user.clubs[clublistId]" class="button button-positive" ng-click="hire(user, position)">
+                Hire
+              </button>
+              <button ng-show="user.clubs[clublistId] || requestAdded" class="button button-assertive" ng-click="fire(user)">
+                Fire
+              </button>
+            </div>
+          </div>
+       
     </div>
 
 

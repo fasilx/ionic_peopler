@@ -11,8 +11,8 @@ angular.module('clublist', [])
  
  
 
-  $scope.newMember = {}
-  $scope.requestingMember = {}
+   $scope.newMember = {}
+   $scope.requestingMember = {}
 
 
   
@@ -337,28 +337,53 @@ angular.module('clublist', [])
 
 
 
-  $scope.memeberAddError = ""
-  $scope.addMember = function(from){
+  // $scope.memeberAddError = ""
+  // $scope.addMember = function(from){
 
-    userRef
-    .startAt($scope.newMember.email)
-    .endAt($scope.newMember.email)
-    .once('value', function(snap) {
+  //   userRef
+  //   .startAt($scope.newMember.email)
+  //   .endAt($scope.newMember.email)
+  //   .once('value', function(snap) {
 
-      $scope.$apply(function(){
-         if(snap.val() === null)
-         $scope.memeberAddError = "Member Not Found"
-      })
+  //     $scope.$apply(function(){
+  //        if(snap.val() === null)
+  //        $scope.memeberAddError = "Member Not Found"
+  //     })
      
     
-      var member_id =  Object.keys(snap.val())[0] 
+  //     var member_id =  Object.keys(snap.val())[0] 
       
 
-      $scope.addRequestingMember(member_id, $scope.newMember.email,$scope.newMember.position)
+  //     $scope.addRequestingMember(member_id, $scope.newMember.email,$scope.newMember.position)
      
-        $scope.memberModal.hide();
+  //       $scope.memberModal.hide();
 
+  //   });
+  // }
+
+
+
+  $scope.hire = function(user, position){
+    console.log(user)
+    console.log(position)
+    $scope.addRequestingMember(user.id, user.displayName, position)
+
+  }
+
+
+  $scope.fire = function(user){
+
+    clubRef.child("members/" + user.id).remove(function(done){
+        console.log("removed from clubRef..."  + user.id)
+      userRef.child(user.id + "/clubs/" +  $stateParams.clublistId).remove(function(doneAgain){
+
+         console.log("removed from userRef ..."  + user.id)
+        
+      })
+     
+     
     });
+
   }
 
 
@@ -418,6 +443,7 @@ angular.module('clublist', [])
     $scope.memberModal = modal;
   });
   $scope.openModal = function() {
+    $scope.clublistId = $stateParams.clublistId;  //asldkfjklasjfklajsfkljsfk aslkdfjaksfkjsdf afasdfj attention
     $scope.memberModal.show();
   };
   $scope.closeModal = function() {

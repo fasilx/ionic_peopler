@@ -379,6 +379,37 @@ angular.module('others', [])
 
 })
 
+
+.controller('UsersCtrl', function($scope, $state, $firebaseSimpleLogin) {
+
+  // var dataRef = new Firebase($scope.URL);
+
+  //var ref = $firebaseSimpleLogin(new Firebase($scope.URL));
+  var ref = new Firebase($scope.URL);
+  var userRef = new Firebase($scope.URL + "/users")
+  
+    ref.onAuth(function(currentUser){
+
+        $scope.users = []
+        userRef.once('value', function(dataSnapshot){
+
+          dataSnapshot.forEach(function(childSnapshot){
+
+                var item = childSnapshot.val()
+                 item.id = childSnapshot.key()
+                 $scope.users.push(item);
+
+
+          });
+
+            
+        })
+
+   });
+
+
+})
+
 .controller('SearchCtrl', function($scope, $state, $firebaseSimpleLogin, $firebase, $ionicModal) {
 
  var ref = new Firebase($scope.URL);
