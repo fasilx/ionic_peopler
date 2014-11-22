@@ -7,7 +7,7 @@
 	<div  class="ion-ios7-email-outline" style="font-size:300%;">	
 	</div>
 	<div  ng-show="messageboxCount > 0" class="message-badge">
-		{{messageboxCount}}
+		<i class="badge badge-assertive">{{messageboxCount}}</i>
 	</div>
 </a>
 
@@ -25,8 +25,9 @@
 <a ng-show="rightToAdd"  class="tab tabs-icon-only" ng-click="openModal()">
 	<div class="ion-ios7-personadd-outline" style="font-size:300%;">	
 	</div>
-	<div  ng-show="requestCount > 0" 
-		class="message-badge">{{requestCount}}
+	<div  ng-show="requestCount > 0" class="message-badge">
+		<i class="badge badge-assertive">{{requestCount}}</i>
+		
 	</div>
 
 </a>

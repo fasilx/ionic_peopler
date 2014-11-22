@@ -85,7 +85,7 @@ angular.module('others', [])
           
           var clubRef = new Firebase($scope.URL + "/clubs")
 
-   
+      
 
          $scope.editMyClub = function(editableItems){
 
@@ -163,7 +163,44 @@ angular.module('others', [])
 
          }
 
-          ref.onAuth(function(currentUser){
+
+  $scope.deleteClub = function(clubKey){
+
+      var r = confirm("Are you sure you want to delete this club?");
+      if (r == true) {
+          // x = "You pressed OK!";
+          var userRef = new Firebase($scope.URL + "/users")
+          userRef.once("value", function(dataSnapshot){
+            dataSnapshot.forEach(function(childSnapshot){
+              
+              
+              if(childSnapshot.hasChild( "clubs/" + clubKey)){
+                 var location = Object.keys(childSnapshot.val().clubs).indexOf(clubKey)
+
+                 userRef.child(childSnapshot.key() + "/clubs/" + clubKey).remove(function(){
+
+                  $scope.closeEditMyClubModal();
+                  console.log(clubKey + " removed from all current users")
+
+                  })
+
+              }
+             
+              // userRef.child(val.clubs + '/' + clubKey).remove(function(){
+              //   console.log(clubKey + " removed from all current users")
+              // })
+
+            });
+
+          })
+          
+
+      } else {
+          // x = "You pressed Cancel!";
+      }
+  }
+
+  ref.onAuth(function(currentUser){
          // currentUser.id = currentUser.uid.split(":")[1]
               if(currentUser === null) return;
 
