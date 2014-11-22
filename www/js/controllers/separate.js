@@ -1,6 +1,6 @@
 angular.module('separate', [])
 .controller('SeparateCtrl', function($scope, $stateParams, $firebase, $ionicScrollDelegate,
-                                     $firebaseSimpleLogin, $ionicModal, capturePictureSrvc, 
+                                     $ionicModal, capturePictureSrvc, 
                                      $state, $timeout, $cordovaDialogs, $filter) {
 
   var clubRef = new Firebase($scope.URL + "/clubs").child($stateParams.clublistId);

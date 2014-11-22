@@ -2,15 +2,19 @@
 <ion-nav-buttons side="left">
 <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
 </ion-nav-buttons>
-<ion-content class="has-header" >
-
-<div ng-controller="CreateCtrl">
-	<button class="button button-block" 
-	        ng-click="openCreateClubModal()">Create new club</button>
-</div>
+<ion-content class="has-header" ng-controller="CreateCtrl">
 
 
-  <div ng-show="loading"><i style="font-size: 400%;"class="ion-loading-c"></i></div>
+	<button ng-show="currentUser" class="button button-block" 
+	        ng-click="openCreateClubModal()">Create new club
+  </button>
+<!--   <button ng-if="!currentUser" class="button button-small button-block button-positive" ng-click="login()">
+          login/sign up
+  </button> -->
+
+
+
+  <!-- <div ng-show="loading"><i style="font-size: 400%;"class="ion-loading-c"></i></div> -->
 
 <!--  {{list}} -->
 <div class="list">
@@ -25,8 +29,8 @@
     <div  ng-click="goToMessages(item.id, item.messageboxCount)">
     <h3>{{item.name}}</h3> <i style="float:right" class="ion-chevron-right" ></i>
     <p>{{item.description}} </p> 
-    <i ng-hide="item.name" class="ion-loading-c"></i>
-    <h3>Founded by {{item.founder | shaveEmail}}</h3>
+    <!-- <i ng-hide="item.name" class="ion-loading-c"></i> -->
+    <h3>Founded by {{item.founder | shaveEmail }} {{item.createdAt | timeago:ago}}</h3>
     <p>{{item.memberCount}}<i ng-show="item.memberCount===1"> member</i> <i ng-show="item.memberCount > 1"> members</i></p> 
     
 

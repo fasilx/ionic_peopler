@@ -1,6 +1,6 @@
 angular.module('main', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseSimpleLogin, $ionicNavBarDelegate, $filter,
+.controller('AppCtrl', function($scope, $ionicModal, $firebase,  $ionicNavBarDelegate, $filter,
   $state, $rootScope, capturePictureSrvc, defaultImage, $timeout) {
 
 
@@ -59,11 +59,16 @@ angular.module('main', [])
     $scope.loginModal.show();
   };
 
+
   $scope.logout = function(){
-    $state.go('intro')
-    ref.unauth()
+    
+    $scope.currentUser = ""
+    ref.unauth(function () {
+     $state.go('app.request')      
+    })
     
   }
+
 
   $scope.closeCreateClubModal = function() {
     $scope.createModal.hide();
@@ -81,30 +86,12 @@ angular.module('main', [])
 
   ref.onAuth(function(currentUser) {
     if (currentUser) {
-      // user authenticated with Firebase
+      
       $scope.currentUser = currentUser;
-
-      //console.log("User ID: " + currentUser.uid + ", Provider: " + currentUser.provider);
     } else {
-      // user is logged out
 
     }
   });
-
-     //  $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
-     //    //console.log("firebaseSimpleLogin login")
-     //    $scope.user = user;
-     //    $state.reload();
-     //   // console.log($scope.user)
-     // });
-     //  // Upon successful logout, reset the user object
-     //  $rootScope.$on("$firebaseSimpleLogin:logout", function(event) {
-     //    $scope.user = null;
-     //    console.log("firebaseSimpleLogin logout")
-     //    console.log($scope.user)
-
-     //  });
-
 
 
   $scope.imageData = ""; // if picture is taken use that, otherwise use empty string
@@ -118,7 +105,7 @@ angular.module('main', [])
   // Perform the login action when the user submits the login form
   $scope.doLogin = function($event) {
 
-
+  
   // more validation                                                          
   if ($scope.loginData.username === "" || $scope.loginData.password === "" || 
       // a hack agains angulars validation, it gives undefined for non-email string

@@ -1,6 +1,6 @@
 <ion-modal-view>
 <ion-header-bar>
-<h1 class="title">{{clubInfo.name}} <i ng-if="!clubInfo.name" class="ion-loading-c" ></i></h1>
+<h1 class="title">{{clubInfo.name}}</i></h1>
 <div class="buttons">
   <button class="button button-clear" ng-click="closeEditMyClubModal()">Close</button>
 </div>
@@ -18,19 +18,21 @@
         </div>
 
    <label class="item item-input item-stacked-label">
-    <span class="input-label">{{clubInfo.name}}<i ng-if="!clubInfo.name" class="ion-loading-c"></i></span>
+    <span class="input-label">{{clubInfo.name}}</span>
     <input type="text" ng-model="club.name" placeholder="enter new club name here">
   </label>
   <label class="item item-input item-stacked-label">
-    <span class="input-label">{{clubInfo.description}}<i ng-if="!clubInfo.description" class="ion-loading-c"></i></span>
+    <span class="input-label">{{clubInfo.description}}</span>
     <input type="text" ng-model="club.description" placeholder="enter new description here">
   </label>
 </div>
+
 
   <div>
   <img ng-hide="$scope.imageData" class="message-box" ng-src="data:image/jpeg;base64,{{clubInfo.avatar}}" 
           height="80" width="80">
   </div>
+
      <div>
   <img ng-show="$scope.imageData" class="message-box" ng-src="data:image/jpeg;base64,{{$scope.imageData}}" 
           height="80" width="80">
@@ -43,6 +45,10 @@
 <button class="button button-block button-positive" ng-click="changeClubProfile(clubKey,club)">
   Change Now
 </button>
+
+
+
+<!-- <div class="col-offset-33"><i class="badge badge-assertive" ng-click="deleteClub(clubKey)"> delete this club </i></div><br> -->
 
 
 </ion-content>

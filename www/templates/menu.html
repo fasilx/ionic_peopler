@@ -8,22 +8,22 @@
     <ion-nav-view name="menuContent" animation="no-animation"></ion-nav-view>
   </ion-pane>
 
-  <ion-side-menu side="left">
+  <ion-side-menu side="left" ng-controller="AppCtrl">
     <header class="bar bar-header bar-light" style="border-color:#FF9900">
       <h1 class="title">{{currentUser.password.email}}</h1>
     </header>
     <ion-content class="has-header">
       <ion-list>
-        <ion-item ng-hide="currentUser" nav-clear menu-close ng-click="login()" style="border-color:#FF9900">
+        <ion-item ng-show="!currentUser" nav-clear menu-close ng-click="login()" style="border-color:#FF9900">
           Login
         </ion-item >
-         <ion-item nav-clear menu-close href="#/app/clublists" style="border-color:#FF9900">
+         <ion-item nav-clear ng-hide="!currentUser" menu-close href="#/app/clublists" style="border-color:#FF9900">
           My Clubs
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/search" style="border-color:#FF9900">
+        <ion-item nav-clear  menu-close href="#/app/request" style="border-color:#FF9900">
           Join A Club
         </ion-item>
-        <ion-item nav-clear menu-close ng-click="openCreateClubModal()" style="border-color:#FF9900">
+        <ion-item nav-clear ng-hide="!currentUser" menu-close ng-click="openCreateClubModal()" style="border-color:#FF9900">
           Create New Club
         </ion-item>
         <ion-item ng-show="currentUser" nav-clear menu-close ng-click="logout()" style="border-color:#FF9900">

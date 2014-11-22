@@ -1,7 +1,7 @@
 angular.module('clublist', [])
 
 .controller('ClublistCtrl', function($scope, $rootScope, $stateParams, $firebase, $ionicScrollDelegate,
-                                      $firebaseSimpleLogin, $ionicModal, $state,
+                                      $ionicModal, $state,
                                       $timeout, $ionicPopover,  $cordovaDialogs, capturePictureSrvc, messageboxSrvc) {
 
  var ref = new Firebase($scope.URL);
@@ -44,6 +44,8 @@ angular.module('clublist', [])
 
   ref.onAuth(function(currentUser){
 
+    if(currentUser){
+      
     $scope.currentUser = currentUser;
 
            // check messages for this user
@@ -83,6 +85,7 @@ angular.module('clublist', [])
        })
       }  
     })
+   }
  })
 
 

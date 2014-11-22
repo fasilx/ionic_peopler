@@ -27,11 +27,12 @@ angular.module
     controller: 'AppCtrl'
   })
 
-  .state('app.search', {
-    url: "/search",
+  .state('app.request', {
+    url: "/request",
     views: {
       'menuContent' :{
-        templateUrl: "templates/request.html"
+        templateUrl: "templates/request.html",
+        controller: 'RequestCtrl'
       }
     }
   })
@@ -112,7 +113,7 @@ angular.module
   //local: compared to what time? default: now
   //raw: wheter you want in a format of "5 minutes ago", or "5 minutes"
   return function (time, local, raw) {
-    if (!time) return "never";
+    if (!time) return "";
 
     if (!local) {
       (local = Date.now())

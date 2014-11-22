@@ -1,4 +1,4 @@
-<ion-view title="Join A Club" ng-controller="SearchCtrl">
+<ion-view title="Join A Club" ng-controller="RequestCtrl">
 <ion-nav-buttons side="left">
 <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
 </ion-nav-buttons>
@@ -11,6 +11,7 @@
  </label>
 </div>
 <!-- {{clubs}} -->
+<button ng-if="!currentUser" class="button button-small button-block button-positive" ng-click="login()">login/sign up here</button>
 <div class="list" >
 
         <div ng-show="requestError" class="row responsive-sm">
@@ -25,19 +26,24 @@
     <img ng-click="expandPhoto(club)" class="message-avatar" ng-src="data:image/jpeg;base64,{{club.avatar}}" 
     alt="img/ionic.png">
     <h4>{{club.name}}
-      (<span><ng-pluralize count="club.memberCount" 
-      when="{'1': '1 member', 'other': '{} members'}">
-    </ng-pluralize>
-  </span>)</h4>
-  <p>Founder: {{club.founders_name | shaveEmail}}</p>
-  <p>{{club.description}}      
-    <i><a class="dim" style="color:#8585FF;float:right" ng-hide="sending || club.pendding" ng-click="joinRequest(club.id); sending = true">
+      ({{club.memberCount}} <span ng-show="club.memberCount === 1">member</span><span ng-show="club.memberCount > 1">members</span>)</h4>
+  <p>Founder: {{club.founders_name | shaveEmail }} {{club.createdAt | timeago:ago}}</p>
+  <p>{{club.description}}  
+
+    <div ng-hide="!currentUser">
+    <i><a class="dim" style="color:#8585FF;float:right" ng-hide="sending || club.pendding || 
+          club.members[currentUser.uid]" ng-click="joinRequest(club.id); sending = true">
       Request To Join
     </a></i>
 
-    <i><a class="dim" style="color:#FF7575;float:right" ng-disabled="success === club.id" ng-show="success === club.id || club.pendding"> 
+    <i class="dim" ng-show="club.members[currentUser.uid]" style="color:green;float:right">Your are in</i>
+
+    <i><a class="dim" style="color:#FF7575;float:right" ng-disabled="success === club.id" ng-show="success === club.id || 
+          club.pendding"> 
       Request Pendding
     </a></i>
+    </div>
+
   </p>
 </div>
 </div>
