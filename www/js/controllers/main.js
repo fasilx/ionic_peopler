@@ -64,6 +64,7 @@ angular.module('main', [])
     
     $scope.currentUser = ""
     ref.unauth(function () {
+     $state.reload();
      $state.go('app.request')      
     })
     

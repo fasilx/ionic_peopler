@@ -175,9 +175,16 @@ angular.module('others', [])
               
               
               if(childSnapshot.hasChild( "clubs/" + clubKey)){
-                 var location = Object.keys(childSnapshot.val().clubs).indexOf(clubKey)
-
+                
                  userRef.child(childSnapshot.key() + "/clubs/" + clubKey).remove(function(){
+
+                  /////////////////
+                  clubRef.child(clubKey).remove();  //removes the club from clublist for good
+                  ////////////////
+
+                  //   /////////////////
+                  // ref.child(messages + "/" + clubKey).remove();  //removes the messages from messageRef for good
+                  // ////////////////
 
                   $scope.closeEditMyClubModal();
                   console.log(clubKey + " removed from all current users")

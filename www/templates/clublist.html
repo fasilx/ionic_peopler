@@ -1,10 +1,10 @@
 
-<ion-view title="{{clubBar.name}}" animation="no-animation" ng-controller="ClublistCtrl">
+<ion-view title="{{clubBar.name}}"  animation="no-animation" ng-controller="ClublistCtrl">
 
 <ion-nav-buttons side="right">
-<a style="padding-right:30px;" ng-if="messageboxCount" class="tab tabs-icon-only" ng-click="goToMessages()">
+<a style="padding-right:40px;" ng-if="messageboxCount" class="tab tabs-icon-only" ng-click="goToMessages()">
 	
-	<div  class="ion-ios7-email-outline" style="font-size:300%;">	
+	<div  class="ion-ios7-email-outline" style="font-size:270%;">	
 	</div>
 	<div  ng-show="messageboxCount > 0" class="message-badge">
 		<i class="badge badge-assertive">{{messageboxCount}}</i>
@@ -12,21 +12,20 @@
 </a>
 
 
-</ion-nav-buttons>
+</ion-nav-buttons side="right">
 <ion-nav-buttons side="right">
 <a style="padding-right:20px;" class="tab tabs-icon-only" ng-click="openPopover()">
-	<i style="font-size:300%;" class="ion-ios7-search-strong"></i>
+	<i style="font-size:270%;" class="ion-ios7-search-strong"></i>
 </a>
 </ion-nav-buttons>
 
 
 <ion-nav-buttons side="right">
-
 <a ng-show="rightToAdd"  class="tab tabs-icon-only" ng-click="openModal()">
-	<div class="ion-ios7-personadd-outline" style="font-size:300%;">	
+	<div class="ion-ios7-personadd-outline" style="font-size:270%;">	
 	</div>
 	<div  ng-show="requestCount > 0" class="message-badge">
-		<i class="badge badge-assertive">{{requestCount}}</i>
+		<i class="badge badge-positive">{{requestCount}}</i>
 		
 	</div>
 
