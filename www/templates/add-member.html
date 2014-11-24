@@ -77,18 +77,19 @@
           </div>
             <!-- {{users}} -->
           <div class="list">
-          <div class="item item-button-right" ng-repeat="user in users | filter:query | limitTo:25" ng-if="user.id !== currentUser.uid">
+          <div class="item item-button-right" ng-repeat="user in users | filter:query | limitTo:7" ng-if="user.id !== currentUser.uid">
               {{user.displayName}}
               <p>
               <select ng-show="!user.clubs[clublistId]" ng-init="position=''" 
                       ng-model="position" ng-options="title for title in titles">
               </select>
               </p>
-              <button ng-show="!user.clubs[clublistId]" class="button button-positive" ng-click="hire(user, position)">
-                Hire
+              <button ng-disabled="disable === user.id" ng-show="!user.clubs[clublistId]" 
+                      class="button button-positive" ng-click="hire(user, position);disable=user.id; ">Hire    
               </button>
-              <button ng-show="user.clubs[clublistId] || requestAdded" class="button button-assertive" ng-click="fire(user)">
-                Fire
+
+              <button ng-disabled="disable === user.id" ng-show="user.clubs[clublistId] || requestAdded" 
+                      class="button button-assertive" ng-click="fire(user);disable=user.id">Fire
               </button>
             </div>
           </div>

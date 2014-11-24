@@ -367,9 +367,11 @@ angular.module('clublist', [])
 
 
   $scope.hire = function(user, position){
-    console.log(user)
-    console.log(position)
-    $scope.addRequestingMember(user.id, user.displayName, position)
+  
+    
+        $scope.addRequestingMember(user.id, user.displayName, position)
+  
+    
 
   }
 
@@ -377,10 +379,9 @@ angular.module('clublist', [])
   $scope.fire = function(user){
 
     clubRef.child("members/" + user.id).remove(function(done){
-        console.log("removed from clubRef..."  + user.id)
+       
       userRef.child(user.id + "/clubs/" +  $stateParams.clublistId).remove(function(doneAgain){
 
-         console.log("removed from userRef ..."  + user.id)
         
       })
      
@@ -396,6 +397,8 @@ angular.module('clublist', [])
     //console.log(rule)
     if($scope.selectedUsers.rule.length === 0 || groupName === null){
 
+
+
      $scope.groupFormingError = "Choose at least one name and don't forget to name the new group"
 
      return; 
@@ -409,8 +412,6 @@ angular.module('clublist', [])
 
     $scope.toPeople($scope.selectedUsers.rule,true); //send true to toPeopele() so it can know this sent it.
   }
-
-
 
   $scope.addRequestingMember = function(id,email,position){
 

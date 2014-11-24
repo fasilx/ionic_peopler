@@ -14,20 +14,25 @@
     </header>
     <ion-content class="has-header">
       <ion-list>
-        <ion-item ng-show="!currentUser" nav-clear menu-close ng-click="login()" style="border-color:#FF9900">
-          Login
+        <ion-item class="item item-icon-left" ng-show="!currentUser" nav-clear menu-close ng-click="login()" style="border-color:#FF9900">
+          <i class="ion-log-in"> Login </i>
+          
         </ion-item >
-         <ion-item nav-clear ng-hide="!currentUser" menu-close href="#/app/clublists" style="border-color:#FF9900">
-          My Clubs
+         <ion-item class="item item-icon-left" nav-clear ng-hide="!currentUser" menu-close href="#/app/clublists" style="border-color:#FF9900">
+         <i class="ion-ios7-people"> My Clubs </i>
+         
         </ion-item>
-        <ion-item nav-clear  menu-close href="#/app/request" style="border-color:#FF9900">
-          Join A Club
+        <ion-item class="item item-icon-left" nav-clear  menu-close href="#/app/request" style="border-color:#FF9900">
+        <i class="ion-ios7-people-outline"> Join A Club </i>
+          
         </ion-item>
-        <ion-item nav-clear ng-hide="!currentUser" menu-close ng-click="openCreateClubModal()" style="border-color:#FF9900">
-          Create New Club
+        <ion-item class="item item-icon-left" nav-clear ng-hide="!currentUser" menu-close ng-click="openCreateClubModal()" style="border-color:#FF9900">
+        <i class="ion-ios7-compose-outline"> Create New Club </i>
+          
         </ion-item>
-        <ion-item ng-show="currentUser" nav-clear menu-close ng-click="logout()" style="border-color:#FF9900">
-          Logout
+        <ion-item class="item item-icon-left" ng-show="currentUser" nav-clear menu-close ng-click="logout()" style="border-color:#FF9900">
+        <i class="ion-log-out"> Logout </i>
+          
         </ion-item>
       </ion-list>
     </ion-content>
